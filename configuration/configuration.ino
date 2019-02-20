@@ -1,9 +1,13 @@
-void setup() {
-  // put your setup code here, to run once:
+/*
+ * This file is the configuration file.
+ * Keep all constants used to configure motors, sensors, positioning, etc.
+ */
 
-}
+ // Motor related constants
+ int min_speed = 0;
+ int max_speed = 255;
 
-void loop() {
-  // put your main code here, to run repeatedly:
+ // Range of ultrasound
+ int max_distance_ultrasound = 250 // in centimetres
 
-}
+ 
