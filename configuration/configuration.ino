@@ -10,4 +10,5 @@
  // Range of ultrasound
  int max_distance_ultrasound = 250 // in centimetres
 
- 
+ // Hall effect sensor
+ int threshold_hall = //TODO     // use this threshold to decide if a block is magnetic or not
