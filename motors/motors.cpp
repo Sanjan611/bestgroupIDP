@@ -1,26 +1,44 @@
-/* 
+/*
  * This file is the motor file.
  * Keep all functions used to control the motors and servos.
  */
 
-#include <Wire.h>
-#include <Adafruit_MotorShield.h>
-
-Adafruit_MotorShield AFMS = Adafruit_MotorShield(); // create default I2C address motor shield object 
+Adafruit_MotorShield AFMS = Adafruit_MotorShield(); // create default I2C address motor shield object
 // custom address in brackets, eg Adafruit_MotorShield(0x61)
 
-// set motor ports 
+// set motor ports
 Adafruit_DCMotor *left_motor = AFMS.getMotor(1); // left motor reverse commands
 Adafruit_DCMotor *right_motor = AFMS.getMotor(2); // right motor normal commands
 
-// Main two motor controls
-void move_forward(front_switch){
-  while(front_switch == False){
-    
+// generic command - move till button pressed, then stop
+void move_till_switch(button){
+  while(button == false){
+    for (i=0; i<255; i++) {
+      right_motor->setSpeed(i);
+      left_motor->setSpeed(i);
+      delay(3);
+    }
+  }
+  else{
+    for (i=255; i!=0; i--) {
+      right_motor->setSpeed(i);
+      left_motor->setSpeed(i);
+      delay(1);
+    }
   }
 }
 
-void move_backward(){
+// Main two motor controls
+void move_forward(front_switch){
+  right_motor->run(FORWARD);
+  left_motor->run(BACKWARD);
+  move_till_switch(front_switch);
+}
+
+void move_backward(back_switch){
+  left_motor->run(FORWARD);
+  right_motor->run(BACKWARD);
+  move_till_switch(back_switch);
 }
 
 void turn_right(){
