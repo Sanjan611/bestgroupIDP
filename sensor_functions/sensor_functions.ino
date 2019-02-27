@@ -22,7 +22,7 @@
    * To check if the microswitch is pressed or not
    */
 
-   
+   return // True? False?
  }
 
  
