@@ -1,11 +1,6 @@
 bool moveToWall(int distance_limit, int distance_no_speed){
 
-  distance = get_distance(); 
-
   Serial.println(distance);
-
-  Serial.print("tick");
-
   Serial.println("Start of one loop \n\n\n");
 
   if(distance > distance_limit){
