@@ -13,11 +13,14 @@ long duration = 0;
 long distance = 0;
 float motor_speed = 0;
 int distance_limit = 30;
-int distance_no_speed = 15;
+int distance_no_speed = 20;
 bool atWall;
-long pastDistances[5] = [100, 100, 100, 100, 100]
+long olddist;
 
 int stage = 0;
+int nextTurn = 1; // 1 if next turn is right 90, 2 if next turn is right 180, 3 if next turn is left 180
+int sweep = 0;
+
 
 void setup() {
   Serial.begin(9600);         
@@ -30,49 +33,88 @@ void setup() {
 
   myMotorLeft->run(RELEASE);
   myMotorRight->run(RELEASE);
-
+  olddist = get_distance();
+  motor_speed = 255;
+  atWall = false;
 }
 
 void loop() {
-
-  distance = get_distance(); 
-  for(int i = 0; i < 4; i++) pastDistances[i] = pastDistances[i+1];
-  pastDistances[4] = distance;
-  Serial.println(pastDistances);
-
-  long runningsum = 0;
-  for(int i = 0; i < 4; i++) runningsum += pastDistances[i];
-  long mean = runningsum/5;
-
-  if(mean < distance){
-    Serial.println("getting closer");
-  }
-  else if(mean > distance){
+  distance = get_distance();
+  /*
+   *  
+  if(olddist < distance) {
     Serial.println("getting further");
+    delay(200);
   }
+  else if(olddist > distance) {
+    Serial.println("getting closer");
+    delay(200);  
+  }
+  else{
+    Serial.println("all chill");
+    delay(200);
+  }*/
 
   switch(stage){
     case 0: // moves forward till wall
-            atWall = moveToWall(distance_limit, distance_no_speed);
-            if(atWall == true){
-              Serial.println("AT WALL YAY");
-              stage = 1;
-            }
-            
-            break;
-
-    case 1: // turn right, move straight till wall
-          Serial.println("you made it into case 1 well done");
+          Serial.println("case 0");
+          if(sweep == 6){
+            Serial.println("sweep 6");
+            distance_limit = 130;
+            distance_no_speed = 120;
+            nextTurn = 4;
+          }
+          else if(sweep == 7) nextTurn = 5;
+          atWall = moveToWall(distance_limit, distance_no_speed);
+          if(atWall == true){
+            stage = nextTurn;
+          }
+          break;
+    case 1: // turn right 90 degrees
+          Serial.println("turning 90 right");
+          //Serial.println("you made it into case 1 well done");
           motor_speed = 100;
-          turnRight(myMotorLeft, motor_speed, myMotorRight, 0, 4400);
+          turnRight(myMotorLeft, motor_speed, myMotorRight, 0, 4500);
           stage = 0;
+          nextTurn += 1;
+          atWall = false;
+          sweep = 1;
+          distance_limit = 40;
+          distance_no_speed = 25;
           break;
 
-    case 2: // Take 180 turn, move straight till wall
-    // this happens for 5 times?
-    break;
+    case 2: // turn right 180 degrees
+          Serial.println("turning 180 right");
+          motor_speed = 100;
+          turnRight(myMotorLeft, motor_speed, myMotorRight, 0, 9050);
+          stage = 0;
+          nextTurn += 1;
+          atWall = false;
+          sweep += 1;
+          break;
+    case 3: // turn left 180 degrees
+          Serial.println("turning 180 left");
+          motor_speed = 100;
+          turnLeft(myMotorLeft, 0, myMotorRight, motor_speed, 9050);
+          stage = 0;
+          nextTurn -= 1;
+          atWall = false;
+          sweep += 1;
+          break;
+    case 4: // turn left 90 degrees
+          Serial.println("turning 90 left");
+          motor_speed = 100;
+          turnLeft(myMotorLeft, 0, myMotorRight, motor_speed, 4500);
+          stage = 0;
+          sweep = 7;
+          distance_limit = 20;
+          distance_no_speed = 7;
+          break;
+
+    case 5:
+          stopMotor(myMotorLeft, myMotorRight, 20);
 
   }
 
-  
+  olddist = distance;
 }

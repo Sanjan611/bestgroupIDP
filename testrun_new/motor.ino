@@ -1,6 +1,6 @@
 void moveForward(Adafruit_DCMotor *motor1, long motor_speed_1, Adafruit_DCMotor *motor2, long motor_speed_2, long dur){
 
-  motor1->setSpeed(motor_speed_1);
+  motor1->setSpeed(motor_speed_1 - 6);
   motor2->setSpeed(motor_speed_2);
 
   motor1->run(BACKWARD);
@@ -55,4 +55,8 @@ void stopMotor(Adafruit_DCMotor *motor1, Adafruit_DCMotor *motor2, long dur){
   motor2->run(RELEASE);
 
   delay(dur);
+}
+
+bool isStuck(){
+  
 }
