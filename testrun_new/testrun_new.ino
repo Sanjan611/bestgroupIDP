@@ -15,6 +15,7 @@ float motor_speed = 0;
 int distance_limit = 30;
 int distance_no_speed = 15;
 bool atWall;
+long pastDistances[5] = [100, 100, 100, 100, 100]
 
 int stage = 0;
 
@@ -35,6 +36,20 @@ void setup() {
 void loop() {
 
   distance = get_distance(); 
+  for(int i = 0; i < 4; i++) pastDistances[i] = pastDistances[i+1];
+  pastDistances[4] = distance;
+  Serial.println(pastDistances);
+
+  long runningsum = 0;
+  for(int i = 0; i < 4; i++) runningsum += pastDistances[i];
+  long mean = runningsum/5;
+
+  if(mean < distance){
+    Serial.println("getting closer");
+  }
+  else if(mean > distance){
+    Serial.println("getting further");
+  }
 
   switch(stage){
     case 0: // moves forward till wall
