@@ -77,7 +77,7 @@ void loop() {
     myMotor->setSpeed(150);
     myMotor1->setSpeed(150);
     myMotor->run(BACKWARD);
-    myMotor1->run(BACKWARD);
+    myMotor1->run(FORWARD);
   }
 
   
