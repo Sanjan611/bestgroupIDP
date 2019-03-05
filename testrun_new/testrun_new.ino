@@ -13,8 +13,10 @@ Adafruit_MotorShield AFMS = Adafruit_MotorShield();
 Adafruit_DCMotor *myMotorLeft = AFMS.getMotor(1);
 Adafruit_DCMotor *myMotorRight = AFMS.getMotor(2);
 
-const int trigPin = 9; // Trigger Pin of Ultrasonic Sensor
-const int echoPin = 10; // Echo Pin of Ultrasonic Sensor
+const int trigPinFront = 9; // Trigger Pin of Ultrasonic Sensor
+const int echoPinFront = 10; // Echo Pin of Ultrasonic Sensor
+const int trigPinSide;
+const int echoPinSide;
 const int photoPin; // Phototransistor Pin - high for block, low for no block
 const int hallPin = 5;  // hall effect sensor pin
 long duration = 0;
@@ -52,7 +54,7 @@ void setup() {
 
 void loop() {
 
-  distance = get_distance();
+  distance = get_distance(1);
   /*
    *
   if(olddist < distance) {
@@ -77,7 +79,7 @@ void loop() {
           }
           else if(sweep == 7) nextTurn = 5; // if facing to shelf, go forward and stop completely (for now)
 
-          checkForBlock(); // incomplete function changing behaviour when blocks detected
+          //checkForBlock(); // incomplete function changing behaviour when blocks detected
 
           atWall = moveToWall(distance_limit, distance_no_speed);
 
