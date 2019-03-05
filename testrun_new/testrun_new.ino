@@ -9,6 +9,7 @@ Adafruit_DCMotor *myMotorRight = AFMS.getMotor(2);
 
 const int trigPin = 9; // Trigger Pin of Ultrasonic Sensor
 const int echoPin = 10; // Echo Pin of Ultrasonic Sensor
+const int photoPin; // Phototransistor Pin - high for block, low for no block
 long duration = 0;
 long distance = 0;
 float motor_speed = 0;
@@ -16,7 +17,6 @@ int distance_limit = 30;
 int distance_no_speed = 20;
 bool atWall;
 long olddist;
-
 int stage = 0;
 int nextTurn = 1; // 1 if next turn is right 90, 2 if next turn is right 180, 3 if next turn is left 180
 int sweep = 0;
@@ -57,18 +57,21 @@ void loop() {
 
   switch(stage){
     case 0: // moves forward till wall
-          Serial.println("case 0");
-          if(sweep == 6){
-            Serial.println("sweep 6");
+          if(sweep == 6){ // if in the last portion of journey, go halfway and turn towards shelf
             distance_limit = 130;
             distance_no_speed = 120;
             nextTurn = 4;
           }
-          else if(sweep == 7) nextTurn = 5;
+          else if(sweep == 7) nextTurn = 5; // if facing to shelf, go forward and stop completely (for now)
+
+          checkForBlock(); // incomplete function changing behaviour when blocks detected
+
           atWall = moveToWall(distance_limit, distance_no_speed);
-          if(atWall == true){
+          
+          if(atWall == true){ // turns when gets close to wall 
             stage = nextTurn;
           }
+          
           break;
     case 1: // turn right 90 degrees
           Serial.println("turning 90 right");
@@ -111,7 +114,7 @@ void loop() {
           distance_no_speed = 7;
           break;
 
-    case 5:
+    case 5: // at loading place
           stopMotor(myMotorLeft, myMotorRight, 20);
 
   }
