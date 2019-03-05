@@ -15,12 +15,13 @@ Adafruit_DCMotor *myMotorRight = AFMS.getMotor(2);
 
 const int trigPinFront = 9; // Trigger Pin of Ultrasonic Sensor
 const int echoPinFront = 10; // Echo Pin of Ultrasonic Sensor
-const int trigPinSide;
-const int echoPinSide;
-const int photoPin; // Phototransistor Pin - high for block, low for no block
+const int trigPinSide = 6;
+const int echoPinSide = 7;
+int trigPin, echoPin;
+const int photoPin = 6; // Phototransistor Pin - high for block, low for no block
 const int hallPin = 5;  // hall effect sensor pin
 long duration = 0;
-long distance = 0;
+float distance = 0;
 float motor_speed = 0;
 int distance_limit = 30;
 int distance_no_speed = 20;
@@ -29,46 +30,62 @@ long olddist;
 int stage = 0;
 int nextTurn = 1; // 1 if next turn is right 90, 2 if next turn is right 180, 3 if next turn is left 180
 int sweep = 0;
-
+int autoCounter = 0;
+float sideDist, sideDistOld, diff;
+float kp = 20;
+bool rwheel;
 
 void setup() {
   Serial.begin(9600);
-  Serial.println("Adafruit Motorshield v2 - DC Motor test!");
+  Serial.println("Hello! I'm Henry the Robot.");
 
-  pinMode(trigPin, OUTPUT); // Sets the trigPin as an Output
-  pinMode(echoPin, INPUT);
+  pinMode(trigPinFront, OUTPUT); // Sets the trigPin as an Output
+  pinMode(echoPinFront, INPUT);
+  pinMode(trigPinSide, OUTPUT); // Sets the trigPin as an Output
+  pinMode(echoPinSide, INPUT);
+  
   pinMode(hallPin, INPUT);
 
   AFMS.begin();  // create with the default frequency 1.6KHz
 
   myMotorLeft->run(RELEASE);
   myMotorRight->run(RELEASE);
-  olddist = get_distance();
   motor_speed = 255;
   atWall = false;
-
+  sideDist = get_distance(2);
+  
   // setting up the servo motors
   // servoFlap.attach(...); // the pin!
   // servoArm.attach(...); // the pin!
 }
 
 void loop() {
-
+  autoCounter += 1;
+  if(autoCounter > 20) {
+    autoCounter = 0;
+  }
+  
+  if(autoCounter == 0){
+    sideDistOld = sideDist;
+    sideDist = get_distance(2);
+    Serial.println(sideDist);
+    diff = sideDist - sideDistOld;
+    if(sideDistOld > sideDist){
+      rwheel = true;
+      diff = -diff;
+    }
+    else if(sideDistOld < sideDist){
+      rwheel = false;
+    }
+    else{
+      diff = 0;
+    }
+    if(diff > 5 || stage != 0) diff = 0;
+  }
+  
   distance = get_distance(1);
-  /*
-   *
-  if(olddist < distance) {
-    Serial.println("getting further");
-    delay(200);
-  }
-  else if(olddist > distance) {
-    Serial.println("getting closer");
-    delay(200);
-  }
-  else{
-    Serial.println("all chill");
-    delay(200);
-  }*/
+
+  if(distance > 100 && distance < 140 && nextTurn == 3 && sweep != 1) diff = 0; 
 
   switch(stage){
     case 0: // moves forward till wall
@@ -78,11 +95,16 @@ void loop() {
             nextTurn = 4;
           }
           else if(sweep == 7) nextTurn = 5; // if facing to shelf, go forward and stop completely (for now)
+          else if(sweep == 8){ 
+            nextTurn = 7;
+            distance_limit = 35;
+            distance_no_speed = 25;
+          }
 
           //checkForBlock(); // incomplete function changing behaviour when blocks detected
 
           atWall = moveToWall(distance_limit, distance_no_speed);
-
+          
           if(atWall == true){ // turns when gets close to wall
             stage = nextTurn;
           }
@@ -92,31 +114,26 @@ void loop() {
           Serial.println("turning 90 right");
           //Serial.println("you made it into case 1 well done");
           motor_speed = 100;
-          turnRight(myMotorLeft, motor_speed, myMotorRight, 0, 4500);
+          turnRight(myMotorLeft, motor_speed, myMotorRight, 0, 4550);
           stage = 0;
           nextTurn += 1;
-          atWall = false;
           sweep = 1;
-          distance_limit = 40;
-          distance_no_speed = 25;
           break;
 
     case 2: // turn right 180 degrees
           Serial.println("turning 180 right");
           motor_speed = 100;
-          turnRight(myMotorLeft, motor_speed, myMotorRight, 0, 9050);
+          turnRight(myMotorLeft, motor_speed, myMotorRight, 0, 9300);
           stage = 0;
           nextTurn += 1;
-          atWall = false;
           sweep += 1;
           break;
     case 3: // turn left 180 degrees
           Serial.println("turning 180 left");
           motor_speed = 100;
-          turnLeft(myMotorLeft, 0, myMotorRight, motor_speed, 9050);
+          turnLeft(myMotorLeft, 0, myMotorRight, motor_speed, 9300);
           stage = 0;
           nextTurn -= 1;
-          atWall = false;
           sweep += 1;
           break;
     case 4: // turn left 90 degrees
@@ -126,12 +143,28 @@ void loop() {
           stage = 0;
           sweep = 7;
           distance_limit = 20;
-          distance_no_speed = 7;
+          distance_no_speed = 8;
           break;
 
     case 5: // at loading place
-          stopMotor(myMotorLeft, myMotorRight, 20);
-
+          stopMotor(myMotorLeft, myMotorRight, 5000);
+          stage = 6;
+          break;
+    case 6: // parking - very ugly rough code but it works
+          motor_speed = 255;
+          moveBackwards(myMotorLeft, motor_speed, myMotorRight, motor_speed, 1000);
+          motor_speed = 100;
+          turnLeft(myMotorLeft, 0, myMotorRight, motor_speed, 4550);
+          stage = 0;
+          sweep = 8;
+          break;
+    case 7: // parking
+          turnRight(myMotorLeft, motor_speed, myMotorRight, 0, 4550);
+          stage = 8;
+          break;
+    case 8: // parking
+          stopMotor(myMotorLeft, myMotorRight, 5000);
+          break;
+          
   }
-  olddist = distance;
 }

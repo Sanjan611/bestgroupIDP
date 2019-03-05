@@ -6,7 +6,7 @@ bool isHallActive(int hallPin){
     return false;
   }
 }
-
+/*
 bool isPhotoActive(int photoPin){
   if(digitalRead(photoPin) == HIGH) return true;
   else return false;
@@ -30,7 +30,7 @@ void checkForBlock(){
    }
 }
 
-
+*/
 /*
  *
  * hall = isHallActive(hallPin);
