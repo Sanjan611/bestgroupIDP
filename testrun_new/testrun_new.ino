@@ -1,6 +1,12 @@
 #include <Wire.h>
 #include <Adafruit_MotorShield.h>
 
+// need to use either servo.h or VarSpeedServo.h
+// the latter has a function to control the speed of the servo arm
+
+// Servo servoFlap;
+// Servo servoArm;
+
 Adafruit_MotorShield AFMS = Adafruit_MotorShield(); 
 
 
@@ -39,6 +45,10 @@ void setup() {
   olddist = get_distance();
   motor_speed = 255;
   atWall = false;
+
+  // setting up the servo motors
+  // servoFlap.attach(...); // the pin!
+  // servoArm.attach(...); // the pin! 
 }
 
 void loop() {
