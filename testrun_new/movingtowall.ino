@@ -1,24 +1,24 @@
 bool moveToWall(int distance_limit, int distance_no_speed){
 
   Serial.println(distance);
-  Serial.println("Start of one loop \n\n\n");
+  //Serial.println("Start of one loop \n\n\n");
 
   if(distance > distance_limit){
-    Serial.println("Inside the IF");
+    //Serial.println("Inside the IF");
     motor_speed = 255;
     moveForward(myMotorLeft, motor_speed, myMotorRight, motor_speed, 10);
     return false;
   }
 
   else if (distance > distance_no_speed) {
-    Serial.println("Inside the ELSE");
+    //Serial.println("Inside the ELSE");
     motor_speed = (distance - distance_no_speed)*(255/(distance_limit - distance_no_speed));
     moveForward(myMotorLeft, motor_speed, myMotorRight, motor_speed, 10);
     return false;
   }
 
   else{
-    stopMotor(myMotorLeft, myMotorRight, 2000);
+    stopMotor(myMotorLeft, myMotorRight, 20);
     return true;
   }
 
