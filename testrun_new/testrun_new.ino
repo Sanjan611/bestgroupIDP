@@ -119,8 +119,5 @@ void loop() {
           stopMotor(myMotorLeft, myMotorRight, 20);
 
   }
-  
-  
-=======
   olddist = distance;
 }
