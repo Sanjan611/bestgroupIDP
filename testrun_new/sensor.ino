@@ -20,3 +20,17 @@ void checkForBlock(){
      motor_speed = 255; // max speed while no block is detected
    }
 }
+
+
+/*
+ *
+ * hall = isHallActive(hallPin);
+  if(hall==true){
+    Serial.println("YES IT IS WORKING!");
+  }
+  else{
+    Serial.println("NOPE");
+  }
+
+  delay(500);
+ */

@@ -1,7 +1,13 @@
 #include <Wire.h>
 #include <Adafruit_MotorShield.h>
 
-Adafruit_MotorShield AFMS = Adafruit_MotorShield(); 
+// need to use either servo.h or VarSpeedServo.h
+// the latter has a function to control the speed of the servo arm
+
+// Servo servoFlap;
+// Servo servoArm;
+
+Adafruit_MotorShield AFMS = Adafruit_MotorShield();
 
 
 Adafruit_DCMotor *myMotorLeft = AFMS.getMotor(1);
@@ -10,12 +16,13 @@ Adafruit_DCMotor *myMotorRight = AFMS.getMotor(2);
 const int trigPin = 9; // Trigger Pin of Ultrasonic Sensor
 const int echoPin = 10; // Echo Pin of Ultrasonic Sensor
 const int photoPin; // Phototransistor Pin - high for block, low for no block
+const int hallPin = 5;  // hall effect sensor pin
 long duration = 0;
 long distance = 0;
 float motor_speed = 0;
 int distance_limit = 30;
 int distance_no_speed = 20;
-bool atWall;
+bool atWall, hall;
 long olddist;
 int stage = 0;
 int nextTurn = 1; // 1 if next turn is right 90, 2 if next turn is right 180, 3 if next turn is left 180
@@ -23,11 +30,12 @@ int sweep = 0;
 
 
 void setup() {
-  Serial.begin(9600);         
+  Serial.begin(9600);
   Serial.println("Adafruit Motorshield v2 - DC Motor test!");
 
   pinMode(trigPin, OUTPUT); // Sets the trigPin as an Output
   pinMode(echoPin, INPUT);
+  pinMode(hallPin, INPUT);
 
   AFMS.begin();  // create with the default frequency 1.6KHz
 
@@ -36,19 +44,24 @@ void setup() {
   olddist = get_distance();
   motor_speed = 255;
   atWall = false;
+
+  // setting up the servo motors
+  // servoFlap.attach(...); // the pin!
+  // servoArm.attach(...); // the pin!
 }
 
 void loop() {
+
   distance = get_distance();
   /*
-   *  
+   *
   if(olddist < distance) {
     Serial.println("getting further");
     delay(200);
   }
   else if(olddist > distance) {
     Serial.println("getting closer");
-    delay(200);  
+    delay(200);
   }
   else{
     Serial.println("all chill");
@@ -67,11 +80,11 @@ void loop() {
           checkForBlock(); // incomplete function changing behaviour when blocks detected
 
           atWall = moveToWall(distance_limit, distance_no_speed);
-          
-          if(atWall == true){ // turns when gets close to wall 
+
+          if(atWall == true){ // turns when gets close to wall
             stage = nextTurn;
           }
-          
+
           break;
     case 1: // turn right 90 degrees
           Serial.println("turning 90 right");
@@ -118,6 +131,5 @@ void loop() {
           stopMotor(myMotorLeft, myMotorRight, 20);
 
   }
-
   olddist = distance;
 }

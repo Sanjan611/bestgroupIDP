@@ -60,3 +60,21 @@ void stopMotor(Adafruit_DCMotor *motor1, Adafruit_DCMotor *motor2, long dur){
 bool isStuck(){
   
 }
+
+void closeFlap(Servo servoFlap){
+  servoFlap.write(90);
+  delay(500);
+}
+
+void openFlap(Servo servoFlap){
+  servoFlap.write(90);
+  delay(500);
+  
+}
+
+void sweepTheArm(Servo servoArm){
+  servoArm.write(90);
+  delay(2000);
+  servoArm.write(0);
+  delay(2000);
+}
