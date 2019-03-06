@@ -1,10 +1,12 @@
 #include <Wire.h>
 #include <Adafruit_MotorShield.h>
 
+#include<Servo.h>
+
 // need to use either servo.h or VarSpeedServo.h
 // the latter has a function to control the speed of the servo arm
 
-// Servo servoFlap;
+Servo servoFlap;
 // Servo servoArm;
 
 Adafruit_MotorShield AFMS = Adafruit_MotorShield(); 
@@ -25,7 +27,7 @@ int distance_no_speed = 20;
 bool atWall, hall;
 long olddist;
 
-int stage = 0;
+int stage = 6;
 int nextTurn = 1; // 1 if next turn is right 90, 2 if next turn is right 180, 3 if next turn is left 180
 int sweep = 0;
 
@@ -47,8 +49,13 @@ void setup() {
   atWall = false;
 
   // setting up the servo motors
-  // servoFlap.attach(...); // the pin!
+  servoFlap.attach(10); // the pin!
   // servoArm.attach(...); // the pin! 
+
+  servoFlap.write(180);
+  delay(1000);
+  servoFlap.write(0);
+  delay(1000);
 }
 
 void loop() {
@@ -127,6 +134,15 @@ void loop() {
 
     case 5:
           stopMotor(myMotorLeft, myMotorRight, 20);
+          break;
+
+    case 6:
+          Serial.println("Opening the flap!");
+          openFlap(servoFlap);
+          Serial.println("Closing the flap!");
+          closeFlap(servoFlap);
+          delay(1000);
+          break;
 
   }
   olddist = distance;

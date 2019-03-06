@@ -61,20 +61,30 @@ bool isStuck(){
   
 }
 
-void closeFlap(Servo servoFlap){
-  servoFlap.write(90);
-  delay(500);
+void closeFlap(Servo &servoFlap){
+  servoFlap.write(0);
+  delay(2000);
 }
 
-void openFlap(Servo servoFlap){
-  servoFlap.write(90);
-  delay(500);
+void openFlap(Servo &servoFlap){
+  servoFlap.write(180);
+  delay(2000);
   
 }
 
 void sweepTheArm(Servo servoArm){
+  // function that sweeps the unloading arm and then brings it back to neutral position
   servoArm.write(90);
   delay(2000);
   servoArm.write(0);
   delay(2000);
+}
+
+
+void liftGoingUp(){
+  
+}
+
+void liftGoingDown() {
+  
 }
