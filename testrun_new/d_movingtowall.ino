@@ -35,7 +35,7 @@ bool moveToWall(int distance_limit, int distance_no_speed){
     stopMotor(myMotorLeft, myMotorRight, 20);
     return true;
   }
-
+}
 
 /*
   if(distance<10){
@@ -44,5 +44,4 @@ bool moveToWall(int distance_limit, int distance_no_speed){
     myMotor->run(BACKWARD);
     myMotor1->run(FORWARD);
   }
-  */
-}
+*/

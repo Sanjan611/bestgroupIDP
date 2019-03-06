@@ -16,7 +16,6 @@ Adafruit_DCMotor *myMotorLeft = AFMS.getMotor(1);
 Adafruit_DCMotor *myMotorRight = AFMS.getMotor(2);
 
 
-bool moveToWall(int distance_limit, int distance_no_speed);
 const int trigPinFront = 9; // Trigger Pin of Ultrasonic Sensor
 const int echoPinFront = 10; // Echo Pin of Ultrasonic Sensor
 const int trigPinSide = 6;
@@ -124,7 +123,7 @@ void loop() {
 
           //checkForBlock(); // incomplete function changing behaviour when blocks detected
 
-          atWall = moveToWall(distance_limit, distance_no_speed);
+          //atWall = moveToWall(distance_limit, distance_no_speed);
           
           if(atWall == true){ // turns when gets close to wall
             stage = nextTurn;

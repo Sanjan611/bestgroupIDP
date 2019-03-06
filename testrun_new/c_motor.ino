@@ -95,10 +95,9 @@ void sweepTheArm(Servo servoArm){
 void liftGoingUp(){
   // lift goes up until the microswitch on top is pressed
   // run the small motor until this happens
-  
+  int a = 1;
 }
 
 void liftGoingDown() {
   
 }
-*/
