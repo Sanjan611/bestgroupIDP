@@ -73,7 +73,7 @@ bool isStuck(){
 void closeFlap(Servo &servoFlap){
   servoFlap.write(0);
   delay(2000);
-=======
+
 /*
 void closeFlap(Servo servoFlap){
   servoFlap.write(90);
@@ -94,7 +94,7 @@ void sweepTheArm(Servo servoArm){
   servoArm.write(0);
   delay(2000);
 }
-<<<<<<< HEAD
+
 
 
 void liftGoingUp(){
@@ -103,6 +103,5 @@ void liftGoingUp(){
 
 void liftGoingDown() {
   
-}
-=======
+
 */

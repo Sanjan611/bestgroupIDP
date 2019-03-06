@@ -29,12 +29,12 @@ int distance_limit = 30;
 int distance_no_speed = 20;
 bool atWall, hall;
 long olddist;
-<<<<<<< HEAD
 
+// FIX!!
 int stage = 6;
-=======
+
 int stage = 0;
->>>>>>> 7924d51e52c72014a517d5b5864fff210ea766a2
+
 int nextTurn = 1; // 1 if next turn is right 90, 2 if next turn is right 180, 3 if next turn is left 180
 int sweep = 0;
 int autoCounter = 0;
