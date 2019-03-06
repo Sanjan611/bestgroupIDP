@@ -36,7 +36,6 @@ bool moveToWall(int distance_limit, int distance_no_speed){
     return true;
   }
 
-  
 
 /*
   if(distance<10){

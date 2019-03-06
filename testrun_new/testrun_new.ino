@@ -15,6 +15,8 @@ Adafruit_MotorShield AFMS = Adafruit_MotorShield();
 Adafruit_DCMotor *myMotorLeft = AFMS.getMotor(1);
 Adafruit_DCMotor *myMotorRight = AFMS.getMotor(2);
 
+
+bool moveToWall(int distance_limit, int distance_no_speed);
 const int trigPinFront = 9; // Trigger Pin of Ultrasonic Sensor
 const int echoPinFront = 10; // Echo Pin of Ultrasonic Sensor
 const int trigPinSide = 6;
@@ -33,7 +35,7 @@ long olddist;
 // FIX!!
 int stage = 6;
 
-int stage = 0;
+//int stage = 0;
 
 int nextTurn = 1; // 1 if next turn is right 90, 2 if next turn is right 180, 3 if next turn is left 180
 int sweep = 0;
@@ -76,6 +78,9 @@ void setup() {
 }
 
 void loop() {
+
+  stage = 10;
+  
   autoCounter += 1;
   if(autoCounter > 20) {
     autoCounter = 0;
@@ -180,6 +185,10 @@ void loop() {
           break;
     case 8: // parking
           stopMotor(myMotorLeft, myMotorRight, 5000);
+          break;
+
+   case 10:  // case just for testing
+          moveForward(myMotorLeft, 100, myMotorRight, 100, 5000);
           break;
           
 

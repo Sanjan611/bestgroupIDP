@@ -73,13 +73,8 @@ bool isStuck(){
 void closeFlap(Servo &servoFlap){
   servoFlap.write(0);
   delay(2000);
-
-/*
-void closeFlap(Servo servoFlap){
-  servoFlap.write(90);
-  delay(500);
->>>>>>> 7924d51e52c72014a517d5b5864fff210ea766a2
 }
+
 
 void openFlap(Servo &servoFlap){
   servoFlap.write(180);
@@ -98,10 +93,12 @@ void sweepTheArm(Servo servoArm){
 
 
 void liftGoingUp(){
+  // lift goes up until the microswitch on top is pressed
+  // run the small motor until this happens
   
 }
 
 void liftGoingDown() {
   
-
+}
 */

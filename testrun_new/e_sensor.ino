@@ -1,4 +1,10 @@
-bool isHallActive(int hallPin){
+
+bool isPhotoActive(int photoPin){
+  if(digitalRead(photoPin) == HIGH) return true;
+  else return false;
+}
+
+bool isHallActive(){
   if(digitalRead(hallPin) == HIGH){
     return true;
   }
@@ -6,23 +12,26 @@ bool isHallActive(int hallPin){
     return false;
   }
 }
-/*
-bool isPhotoActive(int photoPin){
-  if(digitalRead(photoPin) == HIGH) return true;
-  else return false;
-}
+
+
 
 void checkForBlock(){
   if(isPhotoActive == true){
      motor_speed = 100; // slows down when sees block
-     if(isHallActive == false){
+     if(isHallActive() == false){
       // lift descends
+      liftGoingDown();
       // flap moves after delay
+      closeFlap();
       // lift ascends
+      liftGoingUp();
+      // flap moves back to original position
+      openFlap();
      }
      else{
       // block is magnetic, doesn't have to be picked up
       // keep going
+      // make sure that the lift is up
      }
    }
   else{
@@ -30,7 +39,7 @@ void checkForBlock(){
    }
 }
 
-*/
+
 /*
  *
  * hall = isHallActive(hallPin);
@@ -43,3 +52,5 @@ void checkForBlock(){
 
   delay(500);
  */
+
+ 
