@@ -16,12 +16,13 @@ Adafruit_DCMotor *myMotorLeft = AFMS.getMotor(1);
 Adafruit_DCMotor *myMotorRight = AFMS.getMotor(2);
 
 
+bool moveToWall(int distance_limit, int distance_no_speed);
 const int trigPinFront = 9; // Trigger Pin of Ultrasonic Sensor
 const int echoPinFront = 10; // Echo Pin of Ultrasonic Sensor
 const int trigPinSide = 6;
 const int echoPinSide = 7;
 int trigPin, echoPin;
-const int photoPin = 6; // Phototransistor Pin - high for block, low for no block
+const int photoPin = 4; // Phototransistor Pin - high for block, low for no block
 const int hallPin = 5;  // hall effect sensor pin
 long duration = 0;
 float distance = 0;
@@ -30,12 +31,7 @@ int distance_limit = 30;
 int distance_no_speed = 20;
 bool atWall, hall;
 long olddist;
-
-// FIX!!
-int stage = 6;
-
-//int stage = 0;
-
+int stage = 0;
 int nextTurn = 1; // 1 if next turn is right 90, 2 if next turn is right 180, 3 if next turn is left 180
 int sweep = 0;
 int autoCounter = 0;
@@ -100,7 +96,7 @@ void loop() {
     else{
       diff = 0;
     }
-    if(diff > 5 || stage != 0) diff = 0;
+    if(diff > 7 || stage != 0) diff = 0;
   }
   
   distance = get_distance(1);
@@ -123,7 +119,7 @@ void loop() {
 
           //checkForBlock(); // incomplete function changing behaviour when blocks detected
 
-          //atWall = moveToWall(distance_limit, distance_no_speed);
+          atWall = moveToWall(distance_limit, distance_no_speed);
           
           if(atWall == true){ // turns when gets close to wall
             stage = nextTurn;
@@ -187,7 +183,7 @@ void loop() {
           break;
 
    case 10:  // case just for testing
-          moveForward(myMotorLeft, 100, myMotorRight, 100, 5000);
+          moveForward(myMotorLeft, 255, myMotorRight, 255, 5000);
           break;
           
 

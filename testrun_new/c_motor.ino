@@ -64,7 +64,7 @@ void stopMotor(Adafruit_DCMotor *motor1, Adafruit_DCMotor *motor2, long dur){
   motor2->run(RELEASE);
 
   delay(dur);
-
+}
 
 bool isStuck(){
   

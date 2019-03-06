@@ -22,11 +22,11 @@ void checkForBlock(){
       // lift descends
       liftGoingDown();
       // flap moves after delay
-      closeFlap();
+      //closeFlap();
       // lift ascends
       liftGoingUp();
       // flap moves back to original position
-      openFlap();
+      //openFlap();
      }
      else{
       // block is magnetic, doesn't have to be picked up
