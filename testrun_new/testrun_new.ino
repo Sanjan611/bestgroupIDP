@@ -1,17 +1,9 @@
 #include <Wire.h>
 #include <Adafruit_MotorShield.h>
-
-#include<Servo.h>
-
-// need to use either servo.h or VarSpeedServo.h
-// the latter has a function to control the speed of the servo arm
+#include<Servo.h> 
 
 Servo servoFlap;
 // Servo servoArm;
-
-// Servo myservo;
-
-int pos = 0;
 
 Adafruit_MotorShield AFMS = Adafruit_MotorShield();
 
@@ -19,7 +11,7 @@ Adafruit_MotorShield AFMS = Adafruit_MotorShield();
 Adafruit_DCMotor *myMotorLeft = AFMS.getMotor(1);
 Adafruit_DCMotor *myMotorRight = AFMS.getMotor(2);
 
-
+// function and variable definitions
 bool moveToWall(int distance_limit, int distance_no_speed);
 const int trigPinFront = 9; // Trigger Pin of Ultrasonic Sensor
 const int echoPinFront = 10; // Echo Pin of Ultrasonic Sensor
@@ -42,20 +34,25 @@ int autoCounter = 0, liftCounter = 0;
 float sideDist, sideDistOld, diff;
 float kp = 20;
 bool rwheel;
+int pos;
 
 void setup() {
   Serial.begin(9600);
   Serial.println("Hello! I'm Henry the Robot.");
 
-  pinMode(trigPinFront, OUTPUT); // Sets the trigPin as an Output
+  // ultrasound pin setup - trigger output, echo input
+  pinMode(trigPinFront, OUTPUT); 
   pinMode(echoPinFront, INPUT);
-  pinMode(trigPinSide, OUTPUT); // Sets the trigPin as an Output
+  pinMode(trigPinSide, OUTPUT); 
   pinMode(echoPinSide, INPUT);
-  
+
+  // magnetic pin setup
   pinMode(hallPin, INPUT);
 
+  // initialise motor operation
   AFMS.begin();  // create with the default frequency 1.6KHz
 
+  // initialise right and left motors, set initial speed and readings
   myMotorLeft->run(RELEASE);
   myMotorRight->run(RELEASE);
   motor_speed = 255;
@@ -63,7 +60,6 @@ void setup() {
   sideDist = get_distance(2);
   
   // setting up the servo motors
-
   servoFlap.attach(10); // the pin!
   // servoArm.attach(...); // the pin! 
 
@@ -89,12 +85,14 @@ void setup() {
 void loop() {
 
   stage = 10;
-  
+
+  // counter for path auto-correction - checks every 20 loops 
   autoCounter += 1;
   if(autoCounter > 20) {
     autoCounter = 0;
   }
-  
+
+  // compares previous and current distance from wall, adjusts path proportionally to difference
   if(autoCounter == 0){
     sideDistOld = sideDist;
     sideDist = get_distance(2);
@@ -110,6 +108,9 @@ void loop() {
     else{
       diff = 0;
     }
+    
+    // differences above 7cm discarded as anomalous
+    // differences while turning set to 0
     if(diff > 7 || stage != 0) diff = 0;
   }
   
@@ -117,6 +118,8 @@ void loop() {
 
   switch(stage){
     case 0: // moves forward till wall
+
+          // drop off shelf causes some error in ultrasound behaviour - readings disregarded when US pointing at shelf
           if(distance > 100 && distance < 140 && nextTurn == 3 && sweep != 1 && sweep < 6) diff = 0; 
           
           if(sweep == 6){ // if in the last portion of journey, go halfway and turn towards shelf
@@ -124,7 +127,7 @@ void loop() {
             distance_no_speed = 120;
             nextTurn = 4;
           }
-          else if(sweep == 7) nextTurn = 5; // if facing to shelf, go forward and stop completely (for now)
+          else if(sweep == 7) nextTurn = 5; // if facing to shelf, go forward and stop completely 
           else if(sweep == 8){ 
             nextTurn = 7;
             distance_limit = 35;
@@ -133,8 +136,11 @@ void loop() {
 
           //checkForBlock(); // incomplete function changing behaviour when blocks detected
 
+
+          // move forward with course correction until wall reached
           atWall = moveToWall(distance_limit, distance_no_speed);
-          
+
+          // when wall reached, move onto next stage
           if(atWall == true){ // turns when gets close to wall
             stage = nextTurn;
           }
@@ -173,7 +179,7 @@ void loop() {
           stage = 0;
           sweep = 7;
           distance_limit = 20;
-          distance_no_speed = 8;
+          distance_no_speed = 9;
           break;
 
     case 5: // at loading place
@@ -196,7 +202,7 @@ void loop() {
           stopMotor(myMotorLeft, myMotorRight, 5000);
           break;
 
-   case 10:  // case just for testing
+    case 10:  // case just for testing
 
           openFlap(servoFlap, 40, 120);
           /*
