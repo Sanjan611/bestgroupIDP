@@ -19,13 +19,14 @@ bool isHallActive(){
 void checkForBlock(){
   if(isPhotoActive() == true){
      motor_speed = 100; // slows down when sees block
+
      if(isHallActive() == false){
       // lift descends
-      liftGoingDown();
+//      liftGoingDown();
       // flap moves after delay
       //closeFlap();
       // lift ascends
-      liftGoingUp();
+      //liftGoingUp();
       // flap moves back to original position
       //openFlap();
      }

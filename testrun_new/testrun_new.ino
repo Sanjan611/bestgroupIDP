@@ -70,6 +70,12 @@ void setup() {
 
   // servoFlap.attach(...); // the pin!
   // servoArm.attach(...); // the pin!
+  moveForward(myMotorLeft, 200, myMotorRight, 200, 5000);
+  Serial.println("Lift going up!");
+  delay(1000);
+  moveBackwards(myMotorLeft, 200, myMotorRight, 200, 5000);
+  Serial.println("Lift going down!");
+  delay(1000);
 }
 
 void loop() {
@@ -183,7 +189,7 @@ void loop() {
           break;
 
    case 10:  // case just for testing
-          moveForward(myMotorLeft, 255, myMotorRight, 255, 5000);
+          //moveForward(myMotorLeft, 255, myMotorRight, 255, 5000);
           break;
           
 
