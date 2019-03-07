@@ -22,6 +22,15 @@ bool isHallActive(){
   }
 }
 
+bool isMicroswitchPressed(int microPin){
+
+  if(digitalRead(microPin)==HIGH){
+    return true;
+  }
+  else return false;
+  
+}
+
 
 
 void checkForBlock(){
