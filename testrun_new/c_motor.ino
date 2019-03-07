@@ -129,6 +129,7 @@ void liftGoingUp(Adafruit_DCMotor *motor, long motor_speed, long dur){
 void liftGoingDown(Adafruit_DCMotor *motor, long motor_speed, long dur) {
   /*
    * Function to bring the lift down
+   * The lift pulley motor is connected to M3 on the motor shield
    */
   motor->setSpeed(motor_speed);
 

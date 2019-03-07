@@ -1,4 +1,11 @@
-float get_distance(int whichSensor){ // 1 for front, 2 for side
+float get_distance(int whichSensor){
+  /*
+   * Function to get the distance as measured by the ultrasound sensors
+   * By passing argument as 1 or 2, you can get the distance for the 
+   * front or the side ultrasound respectively
+   */
+
+   
   if(whichSensor == 1){
     trigPin = trigPinFront;
     echoPin = echoPinFront;
