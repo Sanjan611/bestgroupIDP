@@ -34,7 +34,7 @@ long olddist;
 int stage = 0;
 int nextTurn = 1; // 1 if next turn is right 90, 2 if next turn is right 180, 3 if next turn is left 180
 int sweep = 0;
-int autoCounter = 0;
+int autoCounter = 0, liftCounter = 0;
 float sideDist, sideDistOld, diff;
 float kp = 20;
 bool rwheel;
@@ -101,10 +101,10 @@ void loop() {
   
   distance = get_distance(1);
 
-  if(distance > 100 && distance < 140 && nextTurn == 3 && sweep != 1) diff = 0; 
-
   switch(stage){
     case 0: // moves forward till wall
+          if(distance > 100 && distance < 140 && nextTurn == 3 && sweep != 1 && sweep < 6) diff = 0; 
+          
           if(sweep == 6){ // if in the last portion of journey, go halfway and turn towards shelf
             distance_limit = 130;
             distance_no_speed = 120;
