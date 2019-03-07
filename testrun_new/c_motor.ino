@@ -65,7 +65,16 @@ void turnLeft(Adafruit_DCMotor *motor1, long motor_speed_1, Adafruit_DCMotor *mo
   motor2->run(RELEASE);
 }
 
-void stopMotor(Adafruit_DCMotor *motor1, Adafruit_DCMotor *motor2, long dur){
+void stopLiftMotor(Adafruit_DCMotor *motor, long dur){
+  motor->setSpeed(0);
+
+  motor->run(RELEASE);
+
+  delay(dur);
+}
+
+
+void stopRLMotors(long dur, Adafruit_DCMotor *motor1, Adafruit_DCMotor *motor2){
   motor1->setSpeed(0);
   motor2->setSpeed(0);
 
@@ -74,6 +83,8 @@ void stopMotor(Adafruit_DCMotor *motor1, Adafruit_DCMotor *motor2, long dur){
 
   delay(dur);
 }
+
+
 
 bool isStuck(){
   
@@ -112,7 +123,7 @@ void sweepTheArm(Servo servoArm){
 
 
 
-void liftGoingUp(Adafruit_DCMotor *motor, long motor_speed, long dur){
+int liftGoingUp(Adafruit_DCMotor *motor, long motor_speed, long dur){
   /*
    * Function to bring the lift up
    * The lift pulley motor is connected to M3 on the motor shield
@@ -121,8 +132,15 @@ void liftGoingUp(Adafruit_DCMotor *motor, long motor_speed, long dur){
   // run the small motor until this happens
   motor->setSpeed(motor_speed);
 
-  motor->run(FORWARD);
-  delay(dur);
+  while(isMicroswitchPressed(microPin)==false){
+    motor->run(FORWARD);
+    
+  }
+  motor->run(RELEASE);
+  return 1;
+  
+  //motor->run(FORWARD);
+  //delay(dur);
   
 }
 

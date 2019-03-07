@@ -32,7 +32,7 @@ bool moveToWall(int distance_limit, int distance_no_speed){
   }
 
   else{
-    stopMotor(myMotorLeft, myMotorRight, 20);
+    stopRLMotors(20, myMotorLeft, myMotorRight);
     return true;
   }
 }

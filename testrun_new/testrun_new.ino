@@ -10,6 +10,9 @@ Adafruit_MotorShield AFMS = Adafruit_MotorShield();
 
 Adafruit_DCMotor *myMotorLeft = AFMS.getMotor(1);
 Adafruit_DCMotor *myMotorRight = AFMS.getMotor(2);
+Adafruit_DCMotor *myMotorLift = AFMS.getMotor(3);
+
+
 
 // function and variable definitions
 bool moveToWall(int distance_limit, int distance_no_speed);
@@ -20,6 +23,7 @@ const int echoPinSide = 7;
 int trigPin, echoPin;
 const int photoPin = 4; // Phototransistor Pin - high for block, low for no block
 const int hallPin = 5;  // hall effect sensor pin
+const int microPin = 6;
 long duration = 0;
 float distance = 0;
 float motor_speed = 0;
@@ -55,6 +59,8 @@ void setup() {
   // initialise right and left motors, set initial speed and readings
   myMotorLeft->run(RELEASE);
   myMotorRight->run(RELEASE);
+  myMotorLift->run(RELEASE);
+  
   motor_speed = 255;
   atWall = false;
   sideDist = get_distance(2);
@@ -80,11 +86,12 @@ void setup() {
   Serial.println("Lift going down!");
   delay(3000);
   */
+          
 }
 
 void loop() {
 
-  stage = 10;
+  stage = 20;
 
   // counter for path auto-correction - checks every 20 loops 
   autoCounter += 1;
@@ -183,9 +190,10 @@ void loop() {
           break;
 
     case 5: // at loading place
-          stopMotor(myMotorLeft, myMotorRight, 5000);
+          stopRLMotors(5000, myMotorRight, myMotorLeft);
           stage = 6;
           break;
+          
     case 6: // parking - very ugly rough code but it works
           motor_speed = 255;
           moveBackwards(myMotorLeft, motor_speed, myMotorRight, motor_speed, 1000);
@@ -199,40 +207,43 @@ void loop() {
           stage = 8;
           break;
     case 8: // parking
-          stopMotor(myMotorLeft, myMotorRight, 5000);
+          stopRLMotors(5000, myMotorRight, myMotorLeft);
           break;
 
     case 10:  // case just for testing
 
           openFlap(servoFlap, 40, 120);
-          /*
-          for (pos = 40; pos <= 120; pos += 1) { // goes from 0 degrees to 180 degrees
-            // in steps of 1 degree
-            myservo.write(pos);              // tell servo to go to position in variable 'pos'
-            delay(15);                       // waits 15ms for the servo to reach the position
-          }
-          */
+        
         
           delay(5000);
 
+          liftGoingUp(myMotorLift, 255, 5000);
+          /*
           moveForward(myMotorLeft, 255, myMotorRight, 255, 5500);
           Serial.println("Lift going up!");
           delay(3000);
+          */
 
           closeFlap(servoFlap, 120, 40);
-          /*
-          for (pos = 120; pos >= 40; pos -= 1) { // goes from 180 degrees to 0 degrees
-            myservo.write(pos);              // tell servo to go to position in variable 'pos'
-            delay(15);                       // waits 15ms for the servo to reach the position
-          }
-          */
+      
         
           delay(5000);
-          
+
+          liftGoingDown(myMotorLift, 255, 5000);
+          /*
           moveBackwards(myMotorLeft, 255, myMotorRight, 255, 10000);
           Serial.println("Lift going down!");
           delay(3000);
+          */
+          
           break;
+
+     case 11:
+          while(1){
+            moveForward(myMotorRight, 200, myMotorLeft, 200, 5000);
+          }
+          break;
+          
           
 
   }

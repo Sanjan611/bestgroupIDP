@@ -1,4 +1,3 @@
-
 bool isPhotoActive(){
   /*
    *  Function to check if the photo transistor is active or not.
@@ -23,6 +22,11 @@ bool isHallActive(){
 }
 
 bool isMicroswitchPressed(int microPin){
+  /*
+   * Function to check if the microswitch is pressed
+   * The microswitch is at the ceiling point of the lift
+   * to check when the lift is at the top most position
+   */
 
   if(digitalRead(microPin)==HIGH){
     return true;
