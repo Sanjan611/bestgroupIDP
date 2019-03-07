@@ -23,7 +23,7 @@ const int echoPinSide = 7;
 int trigPin, echoPin;
 const int photoPin = 4; // Phototransistor Pin - high for block, low for no block
 const int hallPin = 5;  // hall effect sensor pin
-const int microPin = 6;
+const int microPin = 46;
 long duration = 0;
 float distance = 0;
 float motor_speed = 0;
@@ -49,6 +49,7 @@ void setup() {
   pinMode(echoPinFront, INPUT);
   pinMode(trigPinSide, OUTPUT); 
   pinMode(echoPinSide, INPUT);
+  pinMode(microPin, INPUT);
 
   // magnetic pin setup
   pinMode(hallPin, INPUT);
@@ -91,7 +92,7 @@ void setup() {
 
 void loop() {
 
-  stage = 20;
+  stage = 12;
 
   // counter for path auto-correction - checks every 20 loops 
   autoCounter += 1;
@@ -243,6 +244,11 @@ void loop() {
             moveForward(myMotorRight, 200, myMotorLeft, 200, 5000);
           }
           break;
+
+     case 12:
+            if(isMicroswitchPressed(microPin) == true){
+              Serial.println("PRESSED!");
+            }
           
           
 
