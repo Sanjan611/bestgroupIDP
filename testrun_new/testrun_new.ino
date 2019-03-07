@@ -9,6 +9,10 @@
 Servo servoFlap;
 // Servo servoArm;
 
+// Servo myservo;
+
+int pos = 0;
+
 Adafruit_MotorShield AFMS = Adafruit_MotorShield();
 
 
@@ -63,19 +67,23 @@ void setup() {
   servoFlap.attach(10); // the pin!
   // servoArm.attach(...); // the pin! 
 
-  servoFlap.write(180);
-  delay(1000);
-  servoFlap.write(0);
-  delay(1000);
+  //servoFlap.write(180);
+  //delay(1000);
+  //servoFlap.write(0);
+  //delay(1000);
+
+  //myservo.attach(10);
 
   // servoFlap.attach(...); // the pin!
   // servoArm.attach(...); // the pin!
-  moveForward(myMotorLeft, 200, myMotorRight, 200, 5000);
+  /*
+  moveForward(myMotorLeft, 255, myMotorRight, 255, 4500);
   Serial.println("Lift going up!");
-  delay(1000);
-  moveBackwards(myMotorLeft, 200, myMotorRight, 200, 5000);
+  delay(3000);
+  moveBackwards(myMotorLeft, 255, myMotorRight, 255, 7000);
   Serial.println("Lift going down!");
-  delay(1000);
+  delay(3000);
+  */
 }
 
 void loop() {
@@ -189,7 +197,35 @@ void loop() {
           break;
 
    case 10:  // case just for testing
-          //moveForward(myMotorLeft, 255, myMotorRight, 255, 5000);
+
+          openFlap(servoFlap, 40, 120);
+          /*
+          for (pos = 40; pos <= 120; pos += 1) { // goes from 0 degrees to 180 degrees
+            // in steps of 1 degree
+            myservo.write(pos);              // tell servo to go to position in variable 'pos'
+            delay(15);                       // waits 15ms for the servo to reach the position
+          }
+          */
+        
+          delay(5000);
+
+          moveForward(myMotorLeft, 255, myMotorRight, 255, 5500);
+          Serial.println("Lift going up!");
+          delay(3000);
+
+          closeFlap(servoFlap, 120, 40);
+          /*
+          for (pos = 120; pos >= 40; pos -= 1) { // goes from 180 degrees to 0 degrees
+            myservo.write(pos);              // tell servo to go to position in variable 'pos'
+            delay(15);                       // waits 15ms for the servo to reach the position
+          }
+          */
+        
+          delay(5000);
+          
+          moveBackwards(myMotorLeft, 255, myMotorRight, 255, 10000);
+          Serial.println("Lift going down!");
+          delay(3000);
           break;
           
 
