@@ -1,4 +1,7 @@
 void moveForward(Adafruit_DCMotor *motor1, long motor_speed_1, Adafruit_DCMotor *motor2, long motor_speed_2, long dur){
+  /*
+   * Function to move forward
+   */
 
   motor1->setSpeed(motor_speed_1);
   motor2->setSpeed(motor_speed_2);
@@ -10,6 +13,9 @@ void moveForward(Adafruit_DCMotor *motor1, long motor_speed_1, Adafruit_DCMotor 
 }
 
 void moveBackwards(Adafruit_DCMotor *motor1, long motor_speed_1, Adafruit_DCMotor *motor2, long motor_speed_2, long dur){
+  /*
+   * Function to move backwards
+   */
 
   motor1->setSpeed(motor_speed_1);
   motor2->setSpeed(motor_speed_2);
@@ -27,6 +33,9 @@ void moveBackwards(Adafruit_DCMotor *motor1, long motor_speed_1, Adafruit_DCMoto
 }
 
 void turnRight(Adafruit_DCMotor *motor1, long motor_speed_1, Adafruit_DCMotor *motor2, long motor_speed_2, long dur){
+  /*
+   * Function to turn right
+   */
 
   motor1->setSpeed(motor_speed_1);
   motor2->setSpeed(motor_speed_2);
@@ -104,6 +113,10 @@ void sweepTheArm(Servo servoArm){
 
 
 void liftGoingUp(Adafruit_DCMotor *motor, long motor_speed, long dur){
+  /*
+   * Function to bring the lift up
+   * The lift pulley motor is connected to M3 on the motor shield
+   */
   // lift goes up until the microswitch on top is pressed
   // run the small motor until this happens
   motor->setSpeed(motor_speed);
@@ -114,6 +127,9 @@ void liftGoingUp(Adafruit_DCMotor *motor, long motor_speed, long dur){
 }
 
 void liftGoingDown(Adafruit_DCMotor *motor, long motor_speed, long dur) {
+  /*
+   * Function to bring the lift down
+   */
   motor->setSpeed(motor_speed);
 
   motor->run(BACKWARD);
