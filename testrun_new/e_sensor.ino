@@ -1,5 +1,6 @@
 
-bool isPhotoActive(int photoPin){
+bool isPhotoActive(){
+  //note photoPin is declared in the main tab
   if(digitalRead(photoPin) == HIGH) return true;
   else return false;
 }
@@ -16,15 +17,16 @@ bool isHallActive(){
 
 
 void checkForBlock(){
-  if(isPhotoActive == true){
+  if(isPhotoActive() == true){
      motor_speed = 100; // slows down when sees block
+
      if(isHallActive() == false){
       // lift descends
-      liftGoingDown();
+//      liftGoingDown();
       // flap moves after delay
       //closeFlap();
       // lift ascends
-      liftGoingUp();
+      //liftGoingUp();
       // flap moves back to original position
       //openFlap();
      }

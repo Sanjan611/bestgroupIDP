@@ -92,12 +92,19 @@ void sweepTheArm(Servo servoArm){
 
 
 
-void liftGoingUp(){
+void liftGoingUp(Adafruit_DCMotor *motor, long motor_speed, long dur){
   // lift goes up until the microswitch on top is pressed
   // run the small motor until this happens
-  int a = 1;
+  motor->setSpeed(motor_speed);
+
+  motor->run(FORWARD);
+  delay(dur);
+  
 }
 
-void liftGoingDown() {
-  
+void liftGoingDown(Adafruit_DCMotor *motor, long motor_speed, long dur) {
+  motor->setSpeed(motor_speed);
+
+  motor->run(BACKWARD);
+  delay(dur);
 }
