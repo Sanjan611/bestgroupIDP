@@ -154,7 +154,7 @@ void liftGoingUp(Adafruit_DCMotor *motor, long motor_speed, long dur){
   motor->setSpeed(motor_speed);
 
   while(isMicroswitchPressed(microPin)==false){
-    motor->run(FORWARD);
+    motor->run(BACKWARD);
     
   }
   motor->run(RELEASE);
@@ -172,6 +172,6 @@ void liftGoingDown(Adafruit_DCMotor *motor, long motor_speed, long dur) {
    */
   motor->setSpeed(motor_speed);
 
-  motor->run(BACKWARD);
+  motor->run(FORWARD);
   delay(dur);
 }

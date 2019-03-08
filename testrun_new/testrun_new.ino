@@ -90,7 +90,7 @@ void setup() {
   delay(3000);
   */
 
-  stage = 13;
+  stage = 12;
           
 }
 
@@ -223,7 +223,7 @@ void loop() {
         
           delay(5000);
 
-          liftGoingUp(myMotorLift, 255, 5000);
+          //liftGoingUp(myMotorLift, 255, 5000);
           /*
           moveForward(myMotorLeft, 255, myMotorRight, 255, 5500);
           Serial.println("Lift going up!");
@@ -235,7 +235,7 @@ void loop() {
         
           delay(5000);
 
-          liftGoingDown(myMotorLift, 255, 5000);
+          //liftGoingDown(myMotorLift, 255, 5000);
           /*
           moveBackwards(myMotorLeft, 255, myMotorRight, 255, 10000);
           Serial.println("Lift going down!");
@@ -253,28 +253,28 @@ void loop() {
      case 12:
             // trying an integrated case of lift down -> flap close -> lift up -> flap open -> sweep arm
             Serial.println("Starting mechanism ...");
-            delay(4000);
+            delay(2000);
             bringArmToNeutral(servoArm, 0);
             Serial.println("Brought arm to neutral");
-            delay(3000);
+            delay(2000);
             liftGoingUp(myMotorLift, 255, 7000);
             Serial.println("Lift went up");
-            delay(3000);
+            delay(2000);
             openFlap(servoFlap, 40, 120);
             Serial.println("Flap opened");
-            delay(3000);
+            delay(2000);
             liftGoingDown(myMotorLift, 255, 5000);
             Serial.println("Lift went down");
-            delay(3000);
+            delay(2000);
             closeFlap(servoFlap, 120, 40);
             Serial.println("Flap closed");
-            delay(3000);
+            delay(2000);
             liftGoingUp(myMotorLift, 255, 7000);
             Serial.println("Lift went up");
-            delay(3000);
+            delay(2000);
             openFlap(servoFlap, 40, 120);
             Serial.println("Flap opened");
-            delay(3000);
+            delay(2000);
             sweepTheArm(servoArm, 0, 120, 5);
             Serial.println("Sweep arm swept");
             stage = 100;
@@ -282,8 +282,8 @@ void loop() {
 
      case 13:
             Serial.println("Inside case 13!");
-            liftGoingUp(myMotorLift, 255, 9000);
-            //sweepTheArm(servoArm, 0, 120, 5);
+            //liftGoingUp(myMotorLift, 255, 9000);
+            sweepTheArm(servoArm, 0, 120, 5);
             delay(3000);
      case 100:
             break;
