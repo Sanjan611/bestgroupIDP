@@ -3,7 +3,7 @@
 #include<Servo.h> 
 
 Servo servoFlap;
-// Servo servoArm;
+Servo servoArm;
 
 Adafruit_MotorShield AFMS = Adafruit_MotorShield();
 
@@ -16,14 +16,14 @@ Adafruit_DCMotor *myMotorLift = AFMS.getMotor(3);
 
 // function and variable definitions
 bool moveToWall(int distance_limit, int distance_no_speed);
-const int trigPinFront = 9; // Trigger Pin of Ultrasonic Sensor
-const int echoPinFront = 10; // Echo Pin of Ultrasonic Sensor
+const int trigPinFront = 2; // Trigger Pin of Ultrasonic Sensor
+const int echoPinFront = 3; // Echo Pin of Ultrasonic Sensor
 const int trigPinSide = 6;
 const int echoPinSide = 7;
 int trigPin, echoPin;
 const int photoPin = 4; // Phototransistor Pin - high for block, low for no block
 const int hallPin = 5;  // hall effect sensor pin
-const int microPin = 6;
+const int microPin = 4;
 long duration = 0;
 float distance = 0;
 float motor_speed = 0;
@@ -40,6 +40,8 @@ float kp = 20;
 bool rwheel;
 int pos;
 
+
+
 void setup() {
   Serial.begin(9600);
   Serial.println("Hello! I'm Henry the Robot.");
@@ -49,6 +51,7 @@ void setup() {
   pinMode(echoPinFront, INPUT);
   pinMode(trigPinSide, OUTPUT); 
   pinMode(echoPinSide, INPUT);
+  pinMode(microPin, INPUT);
 
   // magnetic pin setup
   pinMode(hallPin, INPUT);
@@ -67,7 +70,7 @@ void setup() {
   
   // setting up the servo motors
   servoFlap.attach(10); // the pin!
-  // servoArm.attach(...); // the pin! 
+  servoArm.attach(9); // the pin! 
 
   //servoFlap.write(180);
   //delay(1000);
@@ -86,12 +89,17 @@ void setup() {
   Serial.println("Lift going down!");
   delay(3000);
   */
+
+  stage = 12;
           
 }
+
+
 
 void loop() {
 
   stage = 0;
+
 
   // counter for path auto-correction - checks every 20 loops 
   autoCounter += 1;
@@ -217,7 +225,7 @@ void loop() {
         
           delay(5000);
 
-          liftGoingUp(myMotorLift, 255, 5000);
+          //liftGoingUp(myMotorLift, 255, 5000);
           /*
           moveForward(myMotorLeft, 255, myMotorRight, 255, 5500);
           Serial.println("Lift going up!");
@@ -229,7 +237,7 @@ void loop() {
         
           delay(5000);
 
-          liftGoingDown(myMotorLift, 255, 5000);
+          //liftGoingDown(myMotorLift, 255, 5000);
           /*
           moveBackwards(myMotorLeft, 255, myMotorRight, 255, 10000);
           Serial.println("Lift going down!");
@@ -243,8 +251,44 @@ void loop() {
             moveForward(myMotorRight, 200, myMotorLeft, 200, 5000);
           }
           break;
-          
-          
+
+     case 12:
+            // trying an integrated case of lift down -> flap close -> lift up -> flap open -> sweep arm
+            Serial.println("Starting mechanism ...");
+            delay(2000);
+            bringArmToNeutral(servoArm, 0);
+            Serial.println("Brought arm to neutral");
+            delay(2000);
+            liftGoingUp(myMotorLift, 255, 7000);
+            Serial.println("Lift went up");
+            delay(2000);
+            openFlap(servoFlap, 40, 120);
+            Serial.println("Flap opened");
+            delay(2000);
+            liftGoingDown(myMotorLift, 255, 5000);
+            Serial.println("Lift went down");
+            delay(2000);
+            closeFlap(servoFlap, 120, 40);
+            Serial.println("Flap closed");
+            delay(2000);
+            liftGoingUp(myMotorLift, 255, 7000);
+            Serial.println("Lift went up");
+            delay(2000);
+            openFlap(servoFlap, 40, 120);
+            Serial.println("Flap opened");
+            delay(2000);
+            sweepTheArm(servoArm, 0, 120, 5);
+            Serial.println("Sweep arm swept");
+            stage = 100;
+            break;
+
+     case 13:
+            Serial.println("Inside case 13!");
+            //liftGoingUp(myMotorLift, 255, 9000);
+            sweepTheArm(servoArm, 0, 120, 5);
+            delay(3000);
+     case 100:
+            break;
 
   }
 }

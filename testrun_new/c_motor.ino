@@ -113,17 +113,38 @@ void openFlap(Servo &servo, int start_degree, int end_degree){
   
 }
 
-void sweepTheArm(Servo servoArm){
+void bringArmToNeutral(Servo servo,int initial){
+
+  servo.write(initial);
+}
+
+void sweepTheArm(Servo servo, int initial, int final, int sweep_step){
   // function that sweeps the unloading arm and then brings it back to neutral position
-  servoArm.write(90);
-  delay(2000);
-  servoArm.write(0);
-  delay(2000);
+  // what works - initial = 0, final = 120, sweep_step = 5
+
+  servo.write(0);
+
+  // sweeping the arm to take off all the blocks collected
+  for (pos = initial; pos <= final; pos += sweep_step) { // goes from 0 degrees to 180 degrees
+    // in steps of 1 degree
+    servo.write(pos);              // tell servo to go to position in variable 'pos'
+    delay(15);  // waits 15ms for the servo to reach the position
+  }
+
+  delay(5000);
+
+  // sweeping the arm back to its original position
+  for (pos = final; pos >= initial; pos -= sweep_step) { // goes from 180 degrees to 0 degrees
+    servo.write(pos);              // tell servo to go to position in variable 'pos'
+    delay(15);                       // waits 15ms for the servo to reach the position
+  }
+
+  delay(3000);
 }
 
 
 
-int liftGoingUp(Adafruit_DCMotor *motor, long motor_speed, long dur){
+void liftGoingUp(Adafruit_DCMotor *motor, long motor_speed, long dur){
   /*
    * Function to bring the lift up
    * The lift pulley motor is connected to M3 on the motor shield
@@ -133,11 +154,11 @@ int liftGoingUp(Adafruit_DCMotor *motor, long motor_speed, long dur){
   motor->setSpeed(motor_speed);
 
   while(isMicroswitchPressed(microPin)==false){
-    motor->run(FORWARD);
+    motor->run(BACKWARD);
     
   }
   motor->run(RELEASE);
-  return 1;
+  //return 1;
   
   //motor->run(FORWARD);
   //delay(dur);
@@ -151,6 +172,6 @@ void liftGoingDown(Adafruit_DCMotor *motor, long motor_speed, long dur) {
    */
   motor->setSpeed(motor_speed);
 
-  motor->run(BACKWARD);
+  motor->run(FORWARD);
   delay(dur);
 }
