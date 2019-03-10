@@ -91,7 +91,7 @@ void setup() {
 
 void loop() {
 
-  stage = 20;
+  stage = 0;
 
   // counter for path auto-correction - checks every 20 loops 
   autoCounter += 1;
