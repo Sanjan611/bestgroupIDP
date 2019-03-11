@@ -16,14 +16,14 @@ Adafruit_DCMotor *myMotorLift = AFMS.getMotor(3);
 
 // function and variable definitions
 bool moveToWall(int distance_limit, int distance_no_speed);
-const int trigPinFront = 2; // Trigger Pin of Ultrasonic Sensor
+const int trigPinFront = 4; // Trigger Pin of Ultrasonic Sensor
 const int echoPinFront = 3; // Echo Pin of Ultrasonic Sensor
 const int trigPinSide = 6;
 const int echoPinSide = 7;
 int trigPin, echoPin;
-const int photoPin = 4; // Phototransistor Pin - high for block, low for no block
+const int photoPin = 8; // Phototransistor Pin - high for block, low for no block
 const int hallPin = 5;  // hall effect sensor pin
-const int microPin = 4;
+const int microPin = 11;
 long duration = 0;
 float distance = 0;
 float motor_speed = 0;
@@ -72,16 +72,6 @@ void setup() {
   // setting up the servo motors
   servoFlap.attach(10); // the pin!
   servoArm.attach(9); // the pin! 
-
-  //servoFlap.write(180);
-  //delay(1000);
-  //servoFlap.write(0);
-  //delay(1000);
-
-  //myservo.attach(10);
-
-  // servoFlap.attach(...); // the pin!
-  // servoArm.attach(...); // the pin!
   /*
   moveForward(myMotorLeft, 255, myMotorRight, 255, 4500);
   Serial.println("Lift going up!");
@@ -91,7 +81,7 @@ void setup() {
   delay(3000);
   */
 
-  stage = 15;
+  stage = 8;
   var = 0;
           
 }
@@ -100,7 +90,7 @@ void setup() {
 
 void loop() {
 
-  stage = 0;
+  //stage = 0;
 
 
   // counter for path auto-correction - checks every 20 loops 
@@ -128,7 +118,7 @@ void loop() {
     
     // differences above 7cm discarded as anomalous
     // differences while turning set to 0
-    if(diff > 7 || stage != 0) diff = 0;
+    if(diff > 7.0 || stage != 0) diff = 0;
   }
   
   distance = get_distance(1);
@@ -153,11 +143,10 @@ void loop() {
 
           //checkForBlock(); // incomplete function changing behaviour when blocks detected
 
-
           // move forward with course correction until wall reached
           atWall = moveToWall(distance_limit, distance_no_speed);
 
-          // when wall reached, move onto next stage
+          // when wall reached, move onto next stage 
           if(atWall == true){ // turns when gets close to wall
             stage = nextTurn;
           }
@@ -167,7 +156,7 @@ void loop() {
           Serial.println("turning 90 right");
           //Serial.println("you made it into case 1 well done");
           motor_speed = 100;
-          turnRight(myMotorLeft, motor_speed, myMotorRight, 0, 4550);
+          turnRight(myMotorLeft, motor_speed, myMotorRight, 0, 4700);
           stage = 0;
           nextTurn += 1;
           sweep = 1;
@@ -176,7 +165,7 @@ void loop() {
     case 2: // turn right 180 degrees
           Serial.println("turning 180 right");
           motor_speed = 100;
-          turnRight(myMotorLeft, motor_speed, myMotorRight, 0, 9300);
+          turnRight(myMotorLeft, motor_speed, myMotorRight, 0, 9400);
           stage = 0;
           nextTurn += 1;
           sweep += 1;
@@ -184,7 +173,7 @@ void loop() {
     case 3: // turn left 180 degrees
           Serial.println("turning 180 left");
           motor_speed = 100;
-          turnLeft(myMotorLeft, 0, myMotorRight, motor_speed, 9300);
+          turnLeft(myMotorLeft, 0, myMotorRight, motor_speed, 9400);
           stage = 0;
           nextTurn -= 1;
           sweep += 1;
@@ -192,7 +181,7 @@ void loop() {
     case 4: // turn left 90 degrees
           Serial.println("turning 90 left");
           motor_speed = 100;
-          turnLeft(myMotorLeft, 0, myMotorRight, motor_speed, 4500);
+          turnLeft(myMotorLeft, 0, myMotorRight, motor_speed, 4700);
           stage = 0;
           sweep = 7;
           distance_limit = 20;
@@ -208,12 +197,12 @@ void loop() {
           motor_speed = 255;
           moveBackwards(myMotorLeft, motor_speed, myMotorRight, motor_speed, 1000);
           motor_speed = 100;
-          turnLeft(myMotorLeft, 0, myMotorRight, motor_speed, 4550);
+          turnLeft(myMotorLeft, 0, myMotorRight, motor_speed, 4700);
           stage = 0;
           sweep = 8;
           break;
     case 7: // parking
-          turnRight(myMotorLeft, motor_speed, myMotorRight, 0, 4550);
+          turnRight(myMotorLeft, motor_speed, myMotorRight, 0, 4700);
           stage = 8;
           break;
     case 8: // parking
@@ -256,31 +245,7 @@ void loop() {
 
      case 12:
             // trying an integrated case of lift down -> flap close -> lift up -> flap open -> sweep arm
-            Serial.println("Starting mechanism ...");
-            delay(2000);
-            bringArmToNeutral(servoArm, 0);
-            Serial.println("Brought arm to neutral");
-            delay(2000);
-            liftGoingUp(myMotorLift, 255, 7000);
-            Serial.println("Lift went up");
-            delay(2000);
-            openFlap(servoFlap, 40, 120);
-            Serial.println("Flap opened");
-            delay(2000);
-            liftGoingDown(myMotorLift, 255, 5000);
-            Serial.println("Lift went down");
-            delay(2000);
-            closeFlap(servoFlap, 120, 40);
-            Serial.println("Flap closed");
-            delay(2000);
-            liftGoingUp(myMotorLift, 255, 7000);
-            Serial.println("Lift went up");
-            delay(2000);
-            openFlap(servoFlap, 40, 120);
-            Serial.println("Flap opened");
-            delay(2000);
-            sweepTheArm(servoArm, 0, 120, 5);
-            Serial.println("Sweep arm swept");
+            pickUp();
             stage = 100;
             break;
 

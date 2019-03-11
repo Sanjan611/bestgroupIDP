@@ -151,23 +151,26 @@ void liftGoingUp(Adafruit_DCMotor *motor, long motor_speed, long dur){
    */
   // lift goes up until the microswitch on top is pressed
   // run the small motor until this happens
+  /*
+  if(isMicroswitchPressed == true){
+    motor->setSpeed(0);
+  }
+  else 
+  */
   motor->setSpeed(motor_speed);
+  Serial.println("lift ascending.....");
+  
+  
 
-  /*  NEED TO UNCOMMENT THIS LATER!
   while(isMicroswitchPressed(microPin)==false){
     motor->run(BACKWARD);
     
   }
-  */
+  
 
-  
-  motor->run(BACKWARD);  // NEED TO REMOVE THIS LINE LATER!
-  delay(dur);
+  Serial.println("Switch has been pressed");
   motor->run(RELEASE);
-  //return 1;
-  
-  //motor->run(FORWARD);
-  //delay(dur);
+ 
   
 }
 
