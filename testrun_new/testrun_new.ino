@@ -39,6 +39,7 @@ float sideDist, sideDistOld, diff;
 float kp = 20;
 bool rwheel;
 int pos;
+int var;
 
 
 
@@ -90,7 +91,8 @@ void setup() {
   delay(3000);
   */
 
-  stage = 12;
+  stage = 15;
+  var = 0;
           
 }
 
@@ -283,8 +285,43 @@ void loop() {
      case 13:
             Serial.println("Inside case 13!");
             //liftGoingUp(myMotorLift, 255, 9000);
-            sweepTheArm(servoArm, 0, 120, 5);
+            openFlap(servoFlap, 40, 120);
             delay(3000);
+            closeFlap(servoFlap, 120, 40);
+            delay(3000);
+            break;
+
+     case 14:
+            if(isHallActive()==true){
+              Serial.println("READING HIGH");
+              delay(100);
+              //var = 1;
+            }
+            else if(isHallActive()==false){
+              Serial.println("READING LOW");
+              delay(100);
+              //var = 0;
+            }
+            break;
+
+     case 15:
+            if(isHallActive()==false){
+              openFlap(servoFlap, 120, 40);
+              delay(500);
+              moveForward(myMotorRight, 100, myMotorLeft, 100, 2000);
+              delay(500);
+              stopRLMotors(100, myMotorRight, myMotorLeft);
+              delay(500);
+              liftGoingUp(myMotorLift, 255, 10000);
+              delay(500);
+              liftGoingDown(myMotorLift, 255, 10000);
+              delay(500);
+              closeFlap(servoFlap, 40, 120);
+              delay(500);
+              liftGoingUp(myMotorLift, 255, 10000);
+              delay(500);
+            }
+            break;
      case 100:
             break;
 
