@@ -25,7 +25,7 @@ int trigPin, echoPin;
 const int photoPin = 8; // Phototransistor Pin - high for block, low for no block
 const int hallPin = 5;  // hall effect sensor pin
 const int microPin = 11;
-const int flashLED = 12;
+//const int flashLED = 12;
 
 
 long duration = 0;
@@ -35,7 +35,7 @@ int distance_limit = 30;
 int distance_no_speed = 20;
 bool atWall, hall;
 long olddist;
-int stage = 0;
+int stage;
 int nextTurn = 1; // 1 if next turn is right 90, 2 if next turn is right 180, 3 if next turn is left 180
 int sweep = 0;
 int autoCounter = 0, liftCounter = 0;
@@ -44,6 +44,7 @@ float kp = 20;
 bool rwheel;
 int pos;
 int var;
+bool isThereABlock;
 
 int time_a = 0;
 int time_b = 0;
@@ -52,6 +53,7 @@ int time_gap = 2000;
 int flashLEDstate = LOW;
 unsigned long previousMillis = 0;
 const long interval = 500;
+
 
 void setup() {
   Serial.begin(9600);
@@ -86,7 +88,7 @@ void setup() {
   servoFlap.attach(10); // the pin!
   servoArm.attach(9); // the pin! 
 
-  stage = 4;
+  stage = 20;
   var = 0;
 
   bringArmToNeutral(servoArm, 0);
@@ -115,20 +117,7 @@ void loop() {
   digitalWrite(flashLED, flashLEDstate);
   // ------------------------------------------
 
-  // for flashing led, add in code for '\blink without delay'
-  unsigned long currentMillis = millis();
-  if(currentMillis - previousMillis >= interval){
-    previousMillis = currentMillis;
-
-    if(flashLEDstate == LOW){
-      flashLEDstate = HIGH;
-    }
-    else{
-      flashLEDstate = LOW;
-    }
-
-    digitalWrite(flashLED, flashLEDstate);
-  }
+  
 
 
   // counter for path auto-correction - checks every 20 loops 
@@ -168,7 +157,7 @@ void loop() {
   
   switch(stage){
     case 0: // moves forward till wall
-          int block_detected = 0;
+          //int block_detected = 0;
 
           Serial.println("Inside stage 0!");
           delay(500);
@@ -189,7 +178,7 @@ void loop() {
             distance_no_speed = 25;
           }
 
-          bool isThereABlock = checkForBlock();
+          isThereABlock = checkForBlock();
           isThereABlock = false;                  // change to true for actual testing!
           if(isThereABlock==true){
             motor_speed = 150;
@@ -219,9 +208,13 @@ void loop() {
           }
 
           break;
-    case 1: // turn right 90 degrees
+          
+    case 1: 
+          // turn right 90 degrees
           Serial.println("Inside stage 1!");
           delay(500);
+          break;
+          
           Serial.println("turning 90 right");
           //Serial.println("you made it into case 1 well done");
           motor_speed = 100;
@@ -231,7 +224,8 @@ void loop() {
           sweep = 1;
           break;
 
-    case 2: // turn right 180 degrees
+    case 2: 
+          // turn right 180 degrees
           Serial.println("Inside stage 2!");
           delay(500);
           Serial.println("turning 180 right");
@@ -241,7 +235,9 @@ void loop() {
           nextTurn += 1;
           sweep += 1;
           break;
-    case 3: // turn left 180 degrees
+          
+    case 3: 
+          // turn left 180 degrees
           Serial.println("turning 180 left");
           motor_speed = 100;
           turnLeft(myMotorLeft, 0, myMotorRight, motor_speed, 9200);
@@ -249,8 +245,10 @@ void loop() {
           nextTurn -= 1;
           sweep += 1;
           break;
-    case 4: // turn left 90 degrees
-          Serial.println("Inside stage 0!");
+          
+    case 4: 
+          // turn left 90 degrees
+          Serial.println("Inside stage 4!");
           delay(500);
           break;
           
@@ -263,7 +261,8 @@ void loop() {
           distance_no_speed = 9;
           break;
 
-    case 5: // at loading place
+    case 5: 
+          // at loading place
           stopRLMotors(5000, myMotorRight, myMotorLeft);
           stage = 6;
           break;
@@ -308,15 +307,15 @@ void loop() {
 
 
      case 20: // HALL SENSOR
-            bool hall = isHallActive();
+            hall = isHallActive();
             if(hall==true){
               Serial.println("READING HIGH");
-              delay(100);
+              delay(300);
               //var = 1;
             }
             else if(hall==false){
               Serial.println("READING LOW");
-              delay(100);
+              delay(300);
               //var = 0;
             }
             break;
@@ -336,6 +335,8 @@ void loop() {
             break;
 
      case 22:   // MICROSWITCH
+            Serial.println("Inside case 22");
+            delay(300);
             if(isMicroswitchPressed(microPin)==true){
               Serial.println("READING HIGH");
               delay(100);
