@@ -39,7 +39,7 @@ int nextTurn = 1; // 1 if next turn is right 90, 2 if next turn is right 180, 3 
 int sweep = 0;
 int autoCounter = 0, liftCounter = 0;
 float sideDist, sideDistOld, diff;
-float kp = 20;
+float kp = 10;
 bool rwheel;
 int pos;
 int var;
@@ -87,7 +87,7 @@ void setup() {
   servoFlap.attach(10); // the pin!
   servoArm.attach(9); // the pin! 
 
-  stage = 20;
+  stage = 0;
   var = 0;
 
   bringArmToNeutral(servoArm, 0);
@@ -142,28 +142,25 @@ void loop() {
     
     // differences above 7cm discarded as anomalous
     // differences while turning set to 0
-    if(diff > 7.0 || stage != 0) diff = 0;
+    if(diff > 5.0 || stage != 0) diff = 0;
+    
   }
+
+ 
   
   distance = get_distance(1);
+  Serial.println(distance);
 
   time_b = millis();
   time_a = millis();
-  Serial.println("Right before the switch");
-  Serial.print("stage is: ");
-  Serial.println(stage);
   
   switch(stage){
     case 0: // moves forward till wall
           //int block_detected = 0;
 
-          Serial.println("Inside stage 0!");
-          delay(500);
-          break;
-
           // drop off shelf causes some error in ultrasound behaviour - readings disregarded when US pointing at shelf
-          //if(distance > 100 && distance < 140 && nextTurn == 3 && sweep != 1 && sweep < 6) diff = 0; 
-          if(sweep < 6) diff = 0; 
+          if(distance > 93 && distance < 140 && nextTurn == 3 && sweep != 1 && sweep < 6) diff = 0; 
+          //if(sweep > 6) diff = 0; 
           if(sweep == 6){ // if in the last portion of journey, go halfway and turn towards shelf
             distance_limit = 130;
             distance_no_speed = 120;
@@ -175,7 +172,7 @@ void loop() {
             distance_limit = 35;
             distance_no_speed = 25;
           }
-
+          
           isThereABlock = checkForBlock();
           isThereABlock = false;                  // change to true for actual testing!
           if(isThereABlock==true){
@@ -209,10 +206,7 @@ void loop() {
           
     case 1: 
           // turn right 90 degrees
-          Serial.println("Inside stage 1!");
-          delay(500);
-          break;
-          
+         
           Serial.println("turning 90 right");
           //Serial.println("you made it into case 1 well done");
           motor_speed = 100;
@@ -220,12 +214,14 @@ void loop() {
           stage = 0;
           nextTurn += 1;
           sweep = 1;
+          distance_limit = 35;
+          distance_no_speed = 25;
           break;
 
     case 2: 
           // turn right 180 degrees
           Serial.println("Inside stage 2!");
-          delay(500);
+          
           Serial.println("turning 180 right");
           motor_speed = 100;
           turnRight(myMotorLeft, motor_speed, myMotorRight, 0, 9200);
@@ -246,9 +242,6 @@ void loop() {
           
     case 4: 
           // turn left 90 degrees
-          Serial.println("Inside stage 4!");
-          delay(500);
-          break;
           
           Serial.println("turning 90 left");
           motor_speed = 100;
@@ -256,7 +249,7 @@ void loop() {
           stage = 0;
           sweep = 7;
           distance_limit = 20;
-          distance_no_speed = 9;
+          distance_no_speed = 10;
           break;
 
     case 5: 
@@ -269,12 +262,12 @@ void loop() {
           motor_speed = 255;
           moveBackwards(myMotorLeft, motor_speed, myMotorRight, motor_speed, 1000);
           motor_speed = 100;
-          turnLeft(myMotorLeft, 0, myMotorRight, motor_speed, 4700);
+          turnLeft(myMotorLeft, 0, myMotorRight, motor_speed, 4600);
           stage = 0;
           sweep = 8;
           break;
     case 7: // parking
-          turnRight(myMotorLeft, motor_speed, myMotorRight, 0, 4700);
+          turnRight(myMotorLeft, motor_speed, myMotorRight, 0, 4600);
           stage = 8;
           break;
     case 8: // parking

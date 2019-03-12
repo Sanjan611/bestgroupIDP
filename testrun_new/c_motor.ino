@@ -3,7 +3,7 @@ void moveForward(Adafruit_DCMotor *motor1, long motor_speed_1, Adafruit_DCMotor 
    * Function to move forward
    */
 
-  motor1->setSpeed(motor_speed_1);
+  motor1->setSpeed(motor_speed_1-10);
   motor2->setSpeed(motor_speed_2);
 
   motor1->run(BACKWARD);
