@@ -24,7 +24,7 @@ int trigPin, echoPin;
 const int photoPin = 8; // Phototransistor Pin - high for block, low for no block
 const int hallPin = 5;  // hall effect sensor pin
 const int microPin = 11;
-const int flashLED = ;
+const int flashLED = 12;
 
 
 long duration = 0;
@@ -93,6 +93,8 @@ void setup() {
   bringArmToNeutral(servoArm, 0);
   Serial.println("Servo arm has been brought to neutral");
   delay(50);
+
+  digitalWrite(flashLED, flashLEDstate);
           
 }
 
@@ -177,6 +179,7 @@ void loop() {
                 break;
               }
             }
+            // by this point, block would be ready to be pushed on to the lift
             // code will go to stage 9 if the hall sensor doesn't become active within the next time_gap milliseconds
             stage = 9;  // for the pick up
             break;
@@ -250,8 +253,8 @@ void loop() {
           stopRLMotors(5000, myMotorRight, myMotorLeft);
           break;
 
-     case 9:
-            // trying an integrated case of lift down -> flap close -> lift up -> flap open -> sweep arm
+    case 9:
+            // After detecting a block and magnetic sensor doesn't become active
             motor_speed = 50;
             moveForward(myMotorRight, motor_speed, myMotorLeft, motor_speed, 1000);
             pickUp();
@@ -259,13 +262,14 @@ void loop() {
             break;
 
             
-     case 11:
+     case 11:   // DISCARD??
           while(1){
             moveForward(myMotorRight, 200, myMotorLeft, 200, 5000);
           }
           break;
 
-     case 12:  // case just for testing
+     case 12:  // DISCARD??
+     // case just for testing
 
           openFlap(servoFlap, 40, 120);
           delay(3000);
