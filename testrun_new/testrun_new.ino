@@ -20,6 +20,7 @@ const int trigPinFront = 4; // Trigger Pin of Ultrasonic Sensor
 const int echoPinFront = 3; // Echo Pin of Ultrasonic Sensor
 const int trigPinSide = 6;
 const int echoPinSide = 7;
+const int flashLED = 12;   // pin number for the flashing led  // TODO! 
 int trigPin, echoPin;
 const int photoPin = 8; // Phototransistor Pin - high for block, low for no block
 const int hallPin = 5;  // hall effect sensor pin
@@ -41,7 +42,9 @@ bool rwheel;
 int pos;
 int var;
 
-
+const long interval = 1000;
+unsigned long previousMillis = 0;
+int flashLEDstate = LOW;
 
 void setup() {
   Serial.begin(9600);
@@ -53,6 +56,7 @@ void setup() {
   pinMode(trigPinSide, OUTPUT); 
   pinMode(echoPinSide, INPUT);
   pinMode(microPin, INPUT);
+  pinMode(flashLED, OUTPUT);
 
   // magnetic pin setup
   pinMode(hallPin, INPUT);
@@ -72,17 +76,12 @@ void setup() {
   // setting up the servo motors
   servoFlap.attach(10); // the pin!
   servoArm.attach(9); // the pin! 
-  /*
-  moveForward(myMotorLeft, 255, myMotorRight, 255, 4500);
-  Serial.println("Lift going up!");
-  delay(3000);
-  moveBackwards(myMotorLeft, 255, myMotorRight, 255, 7000);
-  Serial.println("Lift going down!");
-  delay(3000);
-  */
 
-  stage = 8;
+  stage = 0;
   var = 0;
+  digitalWrite(flashLED, flashLEDstate);
+
+  
           
 }
 
@@ -91,6 +90,21 @@ void setup() {
 void loop() {
 
   //stage = 0;
+
+  // for flashing led, add in code for '\blink without delay'
+  unsigned long currentMillis = millis();
+  if(currentMillis - previousMillis >= interval){
+    previousMillis = currentMillis;
+
+    if(flashLEDstate == LOW){
+      flashLEDstate = HIGH;
+    }
+    else{
+      flashLEDstate = LOW;
+    }
+
+    digitalWrite(flashLED, flashLEDstate);
+  }
 
 
   // counter for path auto-correction - checks every 20 loops 
@@ -127,8 +141,8 @@ void loop() {
     case 0: // moves forward till wall
 
           // drop off shelf causes some error in ultrasound behaviour - readings disregarded when US pointing at shelf
-          if(distance > 100 && distance < 140 && nextTurn == 3 && sweep != 1 && sweep < 6) diff = 0; 
-          
+          //if(distance > 100 && distance < 140 && nextTurn == 3 && sweep != 1 && sweep < 6) diff = 0; 
+          if(sweep < 6) diff = 0; 
           if(sweep == 6){ // if in the last portion of journey, go halfway and turn towards shelf
             distance_limit = 130;
             distance_no_speed = 120;
@@ -141,7 +155,11 @@ void loop() {
             distance_no_speed = 25;
           }
 
-          //checkForBlock(); // incomplete function changing behaviour when blocks detected
+          /*if(isPhotoActive() == true){
+            stage = 9;
+            motor_speed = 50;
+            break;
+          }*/
 
           // move forward with course correction until wall reached
           atWall = moveToWall(distance_limit, distance_no_speed);
@@ -207,6 +225,29 @@ void loop() {
           break;
     case 8: // parking
           stopRLMotors(5000, myMotorRight, myMotorLeft);
+          break;
+
+    case 9:
+          // keep checking for hall sensor for x delay
+          // if hall detected, do nothing
+          // if hall not detected, pick up block
+
+          for(int i = 0; i < 200; i++){
+            motor_speed = 50;
+            moveForward(myMotorLeft, motor_speed, myMotorRight, motor_speed, 10);
+            if(isHallActive() == true) {
+              stage = 0;
+              break;
+            }
+          }
+
+          if(stage!=0){
+            //stage = ; // the stage with the mechanism
+          }
+          
+          
+          
+          
           break;
 
     case 10:  // case just for testing
