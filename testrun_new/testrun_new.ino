@@ -20,6 +20,7 @@ const int trigPinFront = 3; // Trigger Pin of Ultrasonic Sensor
 const int echoPinFront = 2; // Echo Pin of Ultrasonic Sensor
 const int trigPinSide = 6;
 const int echoPinSide = 7;
+const int flashLED = 12;   // pin number for the flashing led  // TODO! 
 int trigPin, echoPin;
 const int photoPin = 8; // Phototransistor Pin - high for block, low for no block
 const int hallPin = 5;  // hall effect sensor pin
@@ -48,11 +49,9 @@ int time_a = 0;
 int time_b = 0;
 int time_gap = 2000;
 
-
 int flashLEDstate = LOW;
 unsigned long previousMillis = 0;
 const long interval = 500;
-
 
 void setup() {
   Serial.begin(9600);
@@ -64,8 +63,8 @@ void setup() {
   pinMode(trigPinSide, OUTPUT); 
   pinMode(echoPinSide, INPUT);
   pinMode(microPin, INPUT);
-  pinMode(photoPin, INPUT);
 
+  pinMode(photoPin, INPUT);
   // magnetic pin setup
   pinMode(hallPin, INPUT);
 
@@ -86,7 +85,6 @@ void setup() {
   // setting up the servo motors
   servoFlap.attach(10); // the pin!
   servoArm.attach(9); // the pin! 
- 
 
   stage = 4;
   var = 0;
@@ -116,6 +114,21 @@ void loop() {
   }
   digitalWrite(flashLED, flashLEDstate);
   // ------------------------------------------
+
+  // for flashing led, add in code for '\blink without delay'
+  unsigned long currentMillis = millis();
+  if(currentMillis - previousMillis >= interval){
+    previousMillis = currentMillis;
+
+    if(flashLEDstate == LOW){
+      flashLEDstate = HIGH;
+    }
+    else{
+      flashLEDstate = LOW;
+    }
+
+    digitalWrite(flashLED, flashLEDstate);
+  }
 
 
   // counter for path auto-correction - checks every 20 loops 
@@ -162,8 +175,8 @@ void loop() {
           break;
 
           // drop off shelf causes some error in ultrasound behaviour - readings disregarded when US pointing at shelf
-          if(distance > 100 && distance < 140 && nextTurn == 3 && sweep != 1 && sweep < 6) diff = 0; 
-          
+          //if(distance > 100 && distance < 140 && nextTurn == 3 && sweep != 1 && sweep < 6) diff = 0; 
+          if(sweep < 6) diff = 0; 
           if(sweep == 6){ // if in the last portion of journey, go halfway and turn towards shelf
             distance_limit = 130;
             distance_no_speed = 120;
@@ -196,7 +209,6 @@ void loop() {
             break;
           }
 
-         
 
           // move forward with course correction until wall reached
           atWall = moveToWall(distance_limit, distance_no_speed);
@@ -280,7 +292,6 @@ void loop() {
             stage = 0;
             break;
 
-            
      case 11:   
           while(1){
             moveForward(myMotorRight, 200, myMotorLeft, 200, 5000);
