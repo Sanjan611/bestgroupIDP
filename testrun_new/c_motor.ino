@@ -58,6 +58,7 @@ void turnLeft(Adafruit_DCMotor *motor1, long motor_speed_1, Adafruit_DCMotor *mo
   motor2->setSpeed(motor_speed_2);
 
   motor2->run(FORWARD);
+  motor1->run(FORWARD);
 
   delay(dur);
 

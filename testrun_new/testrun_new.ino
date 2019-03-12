@@ -260,7 +260,7 @@ void loop() {
           
     case 6: // parking - very ugly rough code but it works
           motor_speed = 255;
-          moveBackwards(myMotorLeft, motor_speed, myMotorRight, motor_speed, 1000);
+          moveBackwards(myMotorLeft, motor_speed, myMotorRight, motor_speed, 1000); 
           motor_speed = 100;
           turnLeft(myMotorLeft, 0, myMotorRight, motor_speed, 4800);
           stage = 0;
