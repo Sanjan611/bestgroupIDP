@@ -25,10 +25,6 @@ int trigPin, echoPin;
 const int photoPin = 8; // Phototransistor Pin - high for block, low for no block
 const int hallPin = 5;  // hall effect sensor pin
 const int microPin = 11;
-<<<<<<< HEAD
-//const int flashLED = 12;
-=======
->>>>>>> af660c90929a3879449b7d9f59ca178157535edc
 
 
 long duration = 0;
@@ -91,11 +87,7 @@ void setup() {
   servoFlap.attach(10); // the pin!
   servoArm.attach(9); // the pin! 
 
-<<<<<<< HEAD
   stage = 20;
-=======
-  stage = 21;
->>>>>>> af660c90929a3879449b7d9f59ca178157535edc
   var = 0;
 
   bringArmToNeutral(servoArm, 0);
@@ -124,11 +116,7 @@ void loop() {
   digitalWrite(flashLED, flashLEDstate);
   // ------------------------------------------
 
-<<<<<<< HEAD
-  
 
-=======
->>>>>>> af660c90929a3879449b7d9f59ca178157535edc
 
   // counter for path auto-correction - checks every 20 loops 
   autoCounter += 1;
