@@ -262,19 +262,10 @@ void loop() {
             break;
 
             
-     case 11:   // DISCARD??
+     case 11:   
           while(1){
             moveForward(myMotorRight, 200, myMotorLeft, 200, 5000);
           }
-          break;
-
-     case 12:  // DISCARD??
-     // case just for testing
-
-          openFlap(servoFlap, 40, 120);
-          delay(3000);
-          closeFlap(servoFlap, 120, 40);    
-          delay(3000);
           break;
           
      case 13:  // TESTING THE SERVO FLAP - OPEN AND CLOSE
