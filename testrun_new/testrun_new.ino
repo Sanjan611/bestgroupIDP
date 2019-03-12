@@ -15,7 +15,7 @@ Adafruit_DCMotor *myMotorLift = AFMS.getMotor(3);
 
 
 // function and variable definitions
-bool moveToWall(int distance_limit, int distance_no_speed);
+// bool moveToWall(int distance_limit, int distance_no_speed);
 const int trigPinFront = 4; // Trigger Pin of Ultrasonic Sensor
 const int echoPinFront = 3; // Echo Pin of Ultrasonic Sensor
 const int trigPinSide = 6;
@@ -24,6 +24,9 @@ int trigPin, echoPin;
 const int photoPin = 8; // Phototransistor Pin - high for block, low for no block
 const int hallPin = 5;  // hall effect sensor pin
 const int microPin = 11;
+const int flashLED = ;
+
+
 long duration = 0;
 float distance = 0;
 float motor_speed = 0;
@@ -41,6 +44,14 @@ bool rwheel;
 int pos;
 int var;
 
+int time_a = 0;
+int time_b = 0;
+int time_gap = 2000;
+
+
+int flashLEDstate = LOW;
+unsigned long previousMillis = 0;
+const long interval = 1000;
 
 
 void setup() {
@@ -57,6 +68,8 @@ void setup() {
   // magnetic pin setup
   pinMode(hallPin, INPUT);
 
+  pinMode(flashLED, OUTPUT);
+
   // initialise motor operation
   AFMS.begin();  // create with the default frequency 1.6KHz
 
@@ -72,25 +85,32 @@ void setup() {
   // setting up the servo motors
   servoFlap.attach(10); // the pin!
   servoArm.attach(9); // the pin! 
-  /*
-  moveForward(myMotorLeft, 255, myMotorRight, 255, 4500);
-  Serial.println("Lift going up!");
-  delay(3000);
-  moveBackwards(myMotorLeft, 255, myMotorRight, 255, 7000);
-  Serial.println("Lift going down!");
-  delay(3000);
-  */
+ 
 
   stage = 8;
   var = 0;
+
+  bringArmToNeutral(servoArm, 0);
+  Serial.println("Servo arm has been brought to neutral");
+  delay(50);
           
 }
 
 
-
 void loop() {
 
-  //stage = 0;
+  // -------This bit of code is to keep the flash led flashing 
+  // -------every 1 second everytime loop is running
+  unsigned long currentMillis = millis();
+  if(currentMillis - previousMillis >= interval){
+    previousMillis = currentMillis;
+    if(flashLEDstate == LOW){
+      flashLEDstate = HIGH;
+    }
+    else flashLEDstate = LOW;
+  }
+  digitalWrite(flashLED, flashLEDstate);
+  // ------------------------------------------
 
 
   // counter for path auto-correction - checks every 20 loops 
@@ -123,8 +143,12 @@ void loop() {
   
   distance = get_distance(1);
 
+  time_b = millis();
+  time_a = millis();
+
   switch(stage){
     case 0: // moves forward till wall
+          int block_detected = 0;
 
           // drop off shelf causes some error in ultrasound behaviour - readings disregarded when US pointing at shelf
           if(distance > 100 && distance < 140 && nextTurn == 3 && sweep != 1 && sweep < 6) diff = 0; 
@@ -141,7 +165,24 @@ void loop() {
             distance_no_speed = 25;
           }
 
-          //checkForBlock(); // incomplete function changing behaviour when blocks detected
+          if(checkforBlock()==true){
+            motor_speed = 150;
+            time_b = time_a;
+            time_a = millis();
+            
+            while(time_a - time_b < time_gap){
+              moveForward(myMotorRight, motor_speed, myMotorLeft, motor_speed, 50);
+              if(isHallActive()==true){
+                stage = 0;
+                break;
+              }
+            }
+            // code will go to stage 9 if the hall sensor doesn't become active within the next time_gap milliseconds
+            stage = 9;  // for the pick up
+            break;
+          }
+
+         
 
           // move forward with course correction until wall reached
           atWall = moveToWall(distance_limit, distance_no_speed);
@@ -209,49 +250,31 @@ void loop() {
           stopRLMotors(5000, myMotorRight, myMotorLeft);
           break;
 
-    case 10:  // case just for testing
+     case 9:
+            // trying an integrated case of lift down -> flap close -> lift up -> flap open -> sweep arm
+            motor_speed = 50;
+            moveForward(myMotorRight, motor_speed, myMotorLeft, motor_speed, 1000);
+            pickUp();
+            stage = 0;
+            break;
 
-          openFlap(servoFlap, 40, 120);
-        
-        
-          delay(5000);
-
-          //liftGoingUp(myMotorLift, 255, 5000);
-          /*
-          moveForward(myMotorLeft, 255, myMotorRight, 255, 5500);
-          Serial.println("Lift going up!");
-          delay(3000);
-          */
-
-          closeFlap(servoFlap, 120, 40);
-      
-        
-          delay(5000);
-
-          //liftGoingDown(myMotorLift, 255, 5000);
-          /*
-          moveBackwards(myMotorLeft, 255, myMotorRight, 255, 10000);
-          Serial.println("Lift going down!");
-          delay(3000);
-          */
-          
-          break;
-
+            
      case 11:
           while(1){
             moveForward(myMotorRight, 200, myMotorLeft, 200, 5000);
           }
           break;
 
-     case 12:
-            // trying an integrated case of lift down -> flap close -> lift up -> flap open -> sweep arm
-            pickUp();
-            stage = 100;
-            break;
+     case 12:  // case just for testing
 
-     case 13:
+          openFlap(servoFlap, 40, 120);
+          delay(3000);
+          closeFlap(servoFlap, 120, 40);    
+          delay(3000);
+          break;
+          
+     case 13:  // TESTING THE SERVO FLAP - OPEN AND CLOSE
             Serial.println("Inside case 13!");
-            //liftGoingUp(myMotorLift, 255, 9000);
             openFlap(servoFlap, 40, 120);
             delay(3000);
             closeFlap(servoFlap, 120, 40);
@@ -272,6 +295,7 @@ void loop() {
             break;
 
      case 15:
+     // this has been rewritten as pickup()!!
             if(isHallActive()==false){
               openFlap(servoFlap, 120, 40);
               delay(500);

@@ -37,44 +37,14 @@ bool isMicroswitchPressed(int microPin){
 
 
 
-void checkForBlock(){
-  
+bool checkForBlock(){
+ 
   if(isPhotoActive() == true){
-     motor_speed = 100; // slows down when sees block
-
-     if(isHallActive() == false){
-      // lift descends
-//      liftGoingDown();
-      // flap moves after delay
-      //closeFlap();
-      // lift ascends
-      //liftGoingUp();
-      // flap moves back to original position
-      //openFlap();
-     }
-     else{
-      // block is magnetic, doesn't have to be picked up
-      // keep going
-      // make sure that the lift is up
-     }
-   }
-  else{
-     motor_speed = 255; // max speed while no block is detected
+    return true;
+   else{
+    return false;
    }
 }
 
-
-/*
- *
- * hall = isHallActive(hallPin);
-  if(hall==true){
-    Serial.println("YES IT IS WORKING!");
-  }
-  else{
-    Serial.println("NOPE");
-  }
-
-  delay(500);
- */
 
  
