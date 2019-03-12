@@ -87,7 +87,7 @@ void setup() {
   servoFlap.attach(10); // the pin!
   servoArm.attach(9); // the pin! 
 
-  stage = 20;
+  stage = 0;
   var = 0;
 
   bringArmToNeutral(servoArm, 0);
