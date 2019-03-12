@@ -39,7 +39,7 @@ int nextTurn = 1; // 1 if next turn is right 90, 2 if next turn is right 180, 3 
 int sweep = 0;
 int autoCounter = 0, liftCounter = 0;
 float sideDist, sideDistOld, diff;
-float kp = 10;
+float kp = 20;
 bool rwheel;
 int pos;
 int var;
@@ -210,7 +210,7 @@ void loop() {
           Serial.println("turning 90 right");
           //Serial.println("you made it into case 1 well done");
           motor_speed = 100;
-          turnRight(myMotorLeft, motor_speed, myMotorRight, 0, 4600);
+          turnRight(myMotorLeft, motor_speed, myMotorRight, 0, 4800);
           stage = 0;
           nextTurn += 1;
           sweep = 1;
@@ -224,7 +224,7 @@ void loop() {
           
           Serial.println("turning 180 right");
           motor_speed = 100;
-          turnRight(myMotorLeft, motor_speed, myMotorRight, 0, 9200);
+          turnRight(myMotorLeft, motor_speed, myMotorRight, 0, 9600);
           stage = 0;
           nextTurn += 1;
           sweep += 1;
@@ -234,7 +234,7 @@ void loop() {
           // turn left 180 degrees
           Serial.println("turning 180 left");
           motor_speed = 100;
-          turnLeft(myMotorLeft, 0, myMotorRight, motor_speed, 9200);
+          turnLeft(myMotorLeft, 0, myMotorRight, motor_speed, 9600);
           stage = 0;
           nextTurn -= 1;
           sweep += 1;
@@ -245,7 +245,7 @@ void loop() {
           
           Serial.println("turning 90 left");
           motor_speed = 100;
-          turnLeft(myMotorLeft, 0, myMotorRight, motor_speed, 4600);
+          turnLeft(myMotorLeft, 0, myMotorRight, motor_speed, 4800);
           stage = 0;
           sweep = 7;
           distance_limit = 20;
@@ -262,12 +262,12 @@ void loop() {
           motor_speed = 255;
           moveBackwards(myMotorLeft, motor_speed, myMotorRight, motor_speed, 1000);
           motor_speed = 100;
-          turnLeft(myMotorLeft, 0, myMotorRight, motor_speed, 4600);
+          turnLeft(myMotorLeft, 0, myMotorRight, motor_speed, 4800);
           stage = 0;
           sweep = 8;
           break;
     case 7: // parking
-          turnRight(myMotorLeft, motor_speed, myMotorRight, 0, 4600);
+          turnRight(myMotorLeft, motor_speed, myMotorRight, 0, 4800);
           stage = 8;
           break;
     case 8: // parking
