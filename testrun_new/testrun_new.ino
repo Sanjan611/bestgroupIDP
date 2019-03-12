@@ -25,7 +25,6 @@ int trigPin, echoPin;
 const int photoPin = 8; // Phototransistor Pin - high for block, low for no block
 const int hallPin = 5;  // hall effect sensor pin
 const int microPin = 11;
-const int flashLED = 12;
 
 
 long duration = 0;
@@ -86,7 +85,7 @@ void setup() {
   servoFlap.attach(10); // the pin!
   servoArm.attach(9); // the pin! 
 
-  stage = 4;
+  stage = 21;
   var = 0;
 
   bringArmToNeutral(servoArm, 0);
@@ -114,21 +113,6 @@ void loop() {
   }
   digitalWrite(flashLED, flashLEDstate);
   // ------------------------------------------
-
-  // for flashing led, add in code for '\blink without delay'
-  unsigned long currentMillis = millis();
-  if(currentMillis - previousMillis >= interval){
-    previousMillis = currentMillis;
-
-    if(flashLEDstate == LOW){
-      flashLEDstate = HIGH;
-    }
-    else{
-      flashLEDstate = LOW;
-    }
-
-    digitalWrite(flashLED, flashLEDstate);
-  }
 
 
   // counter for path auto-correction - checks every 20 loops 
