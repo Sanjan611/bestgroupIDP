@@ -21,7 +21,7 @@ const int echoPinFront = 2; // Echo Pin of Ultrasonic Sensor
 const int trigPinSide = 6;
 const int echoPinSide = 7;
 int trigPin, echoPin;
-const int photoPin = 4; // Phototransistor Pin - high for block, low for no block
+const int photoPin = 8; // Phototransistor Pin - high for block, low for no block
 const int hallPin = 5;  // hall effect sensor pin
 const int microPin = 11;
 const int flashLED = 12;
@@ -88,7 +88,7 @@ void setup() {
   servoArm.attach(9); // the pin! 
  
 
-  stage = 100;
+  stage = 4;
   var = 0;
 
   bringArmToNeutral(servoArm, 0);
@@ -101,8 +101,8 @@ void setup() {
 
 void loop() {
 
-  Serial.println(digitalRead(photoPin));
-  delay(500);
+  //Serial.println(digitalRead(photoPin));
+  //delay(500);
 
   // -------This bit of code is to keep the flash led flashing 
   // -------every 1 second everytime loop is running
@@ -149,9 +149,17 @@ void loop() {
 
   time_b = millis();
   time_a = millis();
+  Serial.println("Right before the switch");
+  Serial.print("stage is: ");
+  Serial.println(stage);
+  
   switch(stage){
     case 0: // moves forward till wall
           int block_detected = 0;
+
+          Serial.println("Inside stage 0!");
+          delay(500);
+          break;
 
           // drop off shelf causes some error in ultrasound behaviour - readings disregarded when US pointing at shelf
           if(distance > 100 && distance < 140 && nextTurn == 3 && sweep != 1 && sweep < 6) diff = 0; 
@@ -200,6 +208,8 @@ void loop() {
 
           break;
     case 1: // turn right 90 degrees
+          Serial.println("Inside stage 1!");
+          delay(500);
           Serial.println("turning 90 right");
           //Serial.println("you made it into case 1 well done");
           motor_speed = 100;
@@ -210,6 +220,8 @@ void loop() {
           break;
 
     case 2: // turn right 180 degrees
+          Serial.println("Inside stage 2!");
+          delay(500);
           Serial.println("turning 180 right");
           motor_speed = 100;
           turnRight(myMotorLeft, motor_speed, myMotorRight, 0, 9200);
@@ -226,6 +238,10 @@ void loop() {
           sweep += 1;
           break;
     case 4: // turn left 90 degrees
+          Serial.println("Inside stage 0!");
+          delay(500);
+          break;
+          
           Serial.println("turning 90 left");
           motor_speed = 100;
           turnLeft(myMotorLeft, 0, myMotorRight, motor_speed, 4600);
@@ -321,6 +337,8 @@ void loop() {
             }
             break;
      case 100:
+            Serial.println("Inside case 100!");
+            delay(500);
             break;
 
   }
