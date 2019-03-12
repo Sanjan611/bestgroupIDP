@@ -41,6 +41,7 @@ bool checkForBlock(){
  
   if(isPhotoActive() == true){
     return true;
+  }
    else{
     return false;
    }

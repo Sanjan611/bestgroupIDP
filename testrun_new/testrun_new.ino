@@ -16,12 +16,12 @@ Adafruit_DCMotor *myMotorLift = AFMS.getMotor(3);
 
 // function and variable definitions
 // bool moveToWall(int distance_limit, int distance_no_speed);
-const int trigPinFront = 4; // Trigger Pin of Ultrasonic Sensor
-const int echoPinFront = 3; // Echo Pin of Ultrasonic Sensor
+const int trigPinFront = 3; // Trigger Pin of Ultrasonic Sensor
+const int echoPinFront = 2; // Echo Pin of Ultrasonic Sensor
 const int trigPinSide = 6;
 const int echoPinSide = 7;
 int trigPin, echoPin;
-const int photoPin = 8; // Phototransistor Pin - high for block, low for no block
+const int photoPin = 4; // Phototransistor Pin - high for block, low for no block
 const int hallPin = 5;  // hall effect sensor pin
 const int microPin = 11;
 const int flashLED = 12;
@@ -51,7 +51,7 @@ int time_gap = 2000;
 
 int flashLEDstate = LOW;
 unsigned long previousMillis = 0;
-const long interval = 1000;
+const long interval = 500;
 
 
 void setup() {
@@ -64,6 +64,7 @@ void setup() {
   pinMode(trigPinSide, OUTPUT); 
   pinMode(echoPinSide, INPUT);
   pinMode(microPin, INPUT);
+  pinMode(photoPin, INPUT);
 
   // magnetic pin setup
   pinMode(hallPin, INPUT);
@@ -87,7 +88,7 @@ void setup() {
   servoArm.attach(9); // the pin! 
  
 
-  stage = 8;
+  stage = 100;
   var = 0;
 
   bringArmToNeutral(servoArm, 0);
@@ -95,11 +96,13 @@ void setup() {
   delay(50);
 
   digitalWrite(flashLED, flashLEDstate);
-          
 }
 
 
 void loop() {
+
+  Serial.println(digitalRead(photoPin));
+  delay(500);
 
   // -------This bit of code is to keep the flash led flashing 
   // -------every 1 second everytime loop is running
@@ -125,7 +128,6 @@ void loop() {
   if(autoCounter == 0){
     sideDistOld = sideDist;
     sideDist = get_distance(2);
-    Serial.println(sideDist);
     diff = sideDist - sideDistOld;
     if(sideDistOld > sideDist){
       rwheel = true;
@@ -147,7 +149,6 @@ void loop() {
 
   time_b = millis();
   time_a = millis();
-
   switch(stage){
     case 0: // moves forward till wall
           int block_detected = 0;
@@ -167,7 +168,9 @@ void loop() {
             distance_no_speed = 25;
           }
 
-          if(checkforBlock()==true){
+          bool isThereABlock = checkForBlock();
+          isThereABlock = false;                  // change to true for actual testing!
+          if(isThereABlock==true){
             motor_speed = 150;
             time_b = time_a;
             time_a = millis();
@@ -200,7 +203,7 @@ void loop() {
           Serial.println("turning 90 right");
           //Serial.println("you made it into case 1 well done");
           motor_speed = 100;
-          turnRight(myMotorLeft, motor_speed, myMotorRight, 0, 4700);
+          turnRight(myMotorLeft, motor_speed, myMotorRight, 0, 4600);
           stage = 0;
           nextTurn += 1;
           sweep = 1;
@@ -209,7 +212,7 @@ void loop() {
     case 2: // turn right 180 degrees
           Serial.println("turning 180 right");
           motor_speed = 100;
-          turnRight(myMotorLeft, motor_speed, myMotorRight, 0, 9400);
+          turnRight(myMotorLeft, motor_speed, myMotorRight, 0, 9200);
           stage = 0;
           nextTurn += 1;
           sweep += 1;
@@ -217,7 +220,7 @@ void loop() {
     case 3: // turn left 180 degrees
           Serial.println("turning 180 left");
           motor_speed = 100;
-          turnLeft(myMotorLeft, 0, myMotorRight, motor_speed, 9400);
+          turnLeft(myMotorLeft, 0, myMotorRight, motor_speed, 9200);
           stage = 0;
           nextTurn -= 1;
           sweep += 1;
@@ -225,7 +228,7 @@ void loop() {
     case 4: // turn left 90 degrees
           Serial.println("turning 90 left");
           motor_speed = 100;
-          turnLeft(myMotorLeft, 0, myMotorRight, motor_speed, 4700);
+          turnLeft(myMotorLeft, 0, myMotorRight, motor_speed, 4600);
           stage = 0;
           sweep = 7;
           distance_limit = 20;
@@ -276,36 +279,45 @@ void loop() {
             delay(3000);
             break;
 
-     case 14:
-            if(isHallActive()==true){
+
+     case 20: // HALL SENSOR
+            bool hall = isHallActive();
+            if(hall==true){
               Serial.println("READING HIGH");
               delay(100);
               //var = 1;
             }
-            else if(isHallActive()==false){
+            else if(hall==false){
               Serial.println("READING LOW");
               delay(100);
               //var = 0;
             }
             break;
 
-     case 15:
-     // this has been rewritten as pickup()!!
-            if(isHallActive()==false){
-              openFlap(servoFlap, 120, 40);
-              delay(500);
-              moveForward(myMotorRight, 100, myMotorLeft, 100, 2000);
-              delay(500);
-              stopRLMotors(100, myMotorRight, myMotorLeft);
-              delay(500);
-              liftGoingUp(myMotorLift, 255, 10000);
-              delay(500);
-              liftGoingDown(myMotorLift, 255, 10000);
-              delay(500);
-              closeFlap(servoFlap, 40, 120);
-              delay(500);
-              liftGoingUp(myMotorLift, 255, 10000);
-              delay(500);
+     case 21:   // PHOTO SENSOR
+            Serial.println("in case 21");
+            if(isPhotoActive()==true){
+              Serial.println("READING HIGH");
+              delay(100);
+             
+            }
+            else if(isPhotoActive()==false){
+              Serial.println("READING LOW");
+              delay(100);
+           
+            }
+            break;
+
+     case 22:   // MICROSWITCH
+            if(isMicroswitchPressed(microPin)==true){
+              Serial.println("READING HIGH");
+              delay(100);
+              //var = 1;
+            }
+            else if(isMicroswitchPressed(microPin)==false){
+              Serial.println("READING LOW");
+              delay(100);
+              //var = 0;
             }
             break;
      case 100:
