@@ -3,7 +3,7 @@ bool moveToWall(int distance_limit, int distance_no_speed){
   //Serial.println("Start of one loop \n\n\n");
 
   if(distance > distance_limit){
-    motor_speed = 255;
+    motor_speed = 200;        // changed from 255!!
     float motor_speed_left, motor_speed_right;
     if(diff == 0){
       motor_speed_left = motor_speed;

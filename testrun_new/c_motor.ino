@@ -56,7 +56,6 @@ void turnLeft(Adafruit_DCMotor *motor1, long motor_speed_1, Adafruit_DCMotor *mo
   motor2->setSpeed(motor_speed_2);
 
   motor2->run(FORWARD);
-  motor1->run(FORWARD);
 
   delay(dur);
 
@@ -92,8 +91,11 @@ bool isStuck(){
 void closeFlap(Servo &servo, int start_degree, int end_degree){
   //servoFlap.write(0);
   //delay(2000);
-
-  for (pos = start_degree; pos >= end_degree; pos -= 1) { // goes from 180 degrees to 0 degrees
+  end_degree = 110;
+  servo.write(end_degree);   // NEW BIT TESTED
+  return;
+  
+  for (pos = start_degree; pos <= end_degree; pos += 3) { // goes from 180 degrees to 0 degrees
      servo.write(pos);              // tell servo to go to position in variable 'pos'
      delay(15);                       // waits 15ms for the servo to reach the position
   }
@@ -104,7 +106,10 @@ void openFlap(Servo &servo, int start_degree, int end_degree){
   //servoFlap.write(180);
   //delay(2000);
 
-  for (pos = start_degree; pos <= end_degree; pos += 1) { // goes from 0 degrees to 180 degrees
+  servo.write(end_degree);     // nEW BIT TESTED
+  return;
+
+  for (pos = start_degree; pos >= end_degree; pos -= 3) { // goes from 0 degrees to 180 degrees
     // in steps of 1 degree
     servo.write(pos);              // tell servo to go to position in variable 'pos'
     delay(15);                       // waits 15ms for the servo to reach the position
@@ -182,4 +187,6 @@ void liftGoingDown(Adafruit_DCMotor *motor, long motor_speed, long dur) {
 
   motor->run(FORWARD);
   delay(dur);
+  motor->setSpeed(0);
+  motor->run(RELEASE);
 }

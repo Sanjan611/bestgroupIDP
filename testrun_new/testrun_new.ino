@@ -49,6 +49,8 @@ int time_a = 0;
 int time_b = 0;
 int time_gap = 2000;
 
+int iterations = 0;
+
 int flashLEDstate = LOW;
 unsigned long previousMillis = 0;
 const long interval = 500;
@@ -57,6 +59,13 @@ const long interval = 500;
 void setup() {
   Serial.begin(9600);
   Serial.println("Hello! I'm Henry the Robot.");
+
+  // initialise right and left motors, set initial speed and readings
+  myMotorLeft->run(RELEASE);
+  myMotorRight->run(RELEASE);
+  myMotorLift->run(RELEASE);
+
+  delay(3000);
 
   // ultrasound pin setup - trigger output, echo input
   pinMode(trigPinFront, OUTPUT); 
@@ -87,7 +96,7 @@ void setup() {
   servoFlap.attach(10); // the pin!
   servoArm.attach(9); // the pin! 
 
-  stage = 0;
+  stage = 13;
   var = 0;
 
   bringArmToNeutral(servoArm, 0);
@@ -95,6 +104,16 @@ void setup() {
   delay(50);
 
   digitalWrite(flashLED, flashLEDstate);
+
+  closeFlap(servoFlap, 40, 120);
+  //openFlap(servoFlap, 120, 40);
+  
+  //Serial.println("Flap set to neutral OPEN position");
+  Serial.println("Flap set to neutral CLOSED position");
+  delay(5000);
+
+  liftGoingUp(myMotorLift, 255, 7000);
+  Serial.println("Lift is now at the top to start off with!");
 }
 
 
@@ -149,14 +168,13 @@ void loop() {
  
   
   distance = get_distance(1);
-  Serial.println(distance);
+  //Serial.println(distance);
 
   time_b = millis();
   time_a = millis();
   
   switch(stage){
     case 0: // moves forward till wall
-          //int block_detected = 0;
 
           // drop off shelf causes some error in ultrasound behaviour - readings disregarded when US pointing at shelf
           if(distance > 93 && distance < 140 && nextTurn == 3 && sweep != 1 && sweep < 6) diff = 0; 
@@ -174,19 +192,62 @@ void loop() {
           }
           
           isThereABlock = checkForBlock();
-          isThereABlock = false;                  // change to true for actual testing!
+          //isThereABlock = false;                  // comment out for actual testing!
           if(isThereABlock==true){
-            motor_speed = 150;
-            time_b = time_a;
-            time_a = millis();
+            Serial.println("BLOCK DETECTED!");
+            //delay(1000);
             
+            stopRLMotors(5000, myMotorRight, myMotorLeft);
+            Serial.println("RL Motors stopped!");
+            closeFlap(servoFlap, 40, 120);
+            Serial.println("Servo flap closed!");
+
+
+            Serial.println("Taking lift up");
+            liftGoingUp(myMotorLift, 255, 7000);
+
+            Serial.println("Taking lift down");
+            liftGoingDown(myMotorLift, 255, 9000);
+            openFlap(servoFlap, 120, 40);
+            Serial.println("Servo flap has been opened!");
+            //moveForward(myMotorLeft, 50, myMotorRight, 50, 1000);
+            
+            
+            //time_b = time_a;
+            //time_a = millis();
+
+            /*
             while(time_a - time_b < time_gap){
+              
               moveForward(myMotorRight, motor_speed, myMotorLeft, motor_speed, 50);
+              Serial.println("Moving sloooowly");
               if(isHallActive()==true){
                 stage = 0;
                 break;
               }
+              time_a = millis();
+              
             }
+            */
+
+            motor_speed = 40;
+            iterations = 0;
+            Serial.println("Entering while loop");
+            while(iterations < 15){
+              //moveForward(myMotorRight, motor_speed, myMotorLeft, motor_speed, 100);
+              moveForward(myMotorLeft, motor_speed, myMotorRight, motor_speed, 50);
+              iterations+=1;
+              Serial.print(iterations);
+              if(isHallActive()==true){
+                Serial.println("MAGNETIC BLOCK DETECTED");
+                delay(1000);
+                liftGoingUp(myMotorLift, 255, 10000);
+                stage = 0;
+                break;
+              }
+            }
+            
+            stopRLMotors(2000, myMotorRight, myMotorLeft);
             // by this point, block would be ready to be pushed on to the lift
             // code will go to stage 9 if the hall sensor doesn't become active within the next time_gap milliseconds
             stage = 9;  // for the pick up
@@ -260,7 +321,7 @@ void loop() {
           
     case 6: // parking - very ugly rough code but it works
           motor_speed = 255;
-          moveBackwards(myMotorLeft, motor_speed, myMotorRight, motor_speed, 1000); 
+          moveBackwards(myMotorLeft, motor_speed, myMotorRight, motor_speed, 1000);
           motor_speed = 100;
           turnLeft(myMotorLeft, 0, myMotorRight, motor_speed, 4800);
           stage = 0;
@@ -276,8 +337,9 @@ void loop() {
 
     case 9:
             // After detecting a block and magnetic sensor doesn't become active
-            motor_speed = 50;
-            moveForward(myMotorRight, motor_speed, myMotorLeft, motor_speed, 1000);
+            motor_speed = 30;
+            moveForward(myMotorLeft, motor_speed, myMotorRight, motor_speed, 1000);
+            stopRLMotors(2000, myMotorRight, myMotorLeft);
             pickUp();
             stage = 0;
             break;
@@ -290,9 +352,11 @@ void loop() {
           
      case 13:  // TESTING THE SERVO FLAP - OPEN AND CLOSE
             Serial.println("Inside case 13!");
-            openFlap(servoFlap, 40, 120);
+            openFlap(servoFlap, 120, 40);
+            Serial.println("FLAP OPENED");
             delay(3000);
-            closeFlap(servoFlap, 120, 40);
+            closeFlap(servoFlap, 40, 120);
+            Serial.println("FLAP CLOSED");
             delay(3000);
             break;
 
@@ -339,6 +403,19 @@ void loop() {
               //var = 0;
             }
             break;
+
+     case 23:
+              liftGoingUp(myMotorLift, 255, 10000);
+              delay(1000);
+              openFlap(servoFlap, 120, 40);
+              delay(1000);
+              liftGoingDown(myMotorLift, 255, 9000);
+              delay(1000);
+              closeFlap(servoFlap, 40, 120);
+              delay(5000);
+              break;
+              
+              
      case 100:
             Serial.println("Inside case 100!");
             delay(500);
