@@ -45,6 +45,8 @@ int pos;
 int var;
 bool isThereABlock;
 
+int flag = 0;
+
 int time_a = 0;
 int time_b = 0;
 int time_gap = 2000;
@@ -96,12 +98,24 @@ void setup() {
   servoFlap.attach(10); // the pin!
   servoArm.attach(9); // the pin! 
 
-  stage = 13;
-  var = 0;
 
-  bringArmToNeutral(servoArm, 0);
-  Serial.println("Servo arm has been brought to neutral");
-  delay(50);
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  stage = 0;
+  var = 0;
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+  //bringArmToNeutral(servoArm, 0);
+  //Serial.println("Servo arm has been brought to neutral");
+  //delay(2000);
+
+  servoArm.write(40);
+  delay(500);
+
+  //sweepTheArm(servoArm, 0, 90, 5);
+  //Serial.println("swept!");
+  //delay(2000);
+
+  
 
   digitalWrite(flashLED, flashLEDstate);
 
@@ -110,9 +124,8 @@ void setup() {
   
   //Serial.println("Flap set to neutral OPEN position");
   Serial.println("Flap set to neutral CLOSED position");
-  delay(5000);
 
-  liftGoingUp(myMotorLift, 255, 7000);
+  liftGoingUp(myMotorLift, 255, 10000);
   Serial.println("Lift is now at the top to start off with!");
 }
 
@@ -197,19 +210,21 @@ void loop() {
             Serial.println("BLOCK DETECTED!");
             //delay(1000);
             
-            stopRLMotors(5000, myMotorRight, myMotorLeft);
+            stopRLMotors(2000, myMotorRight, myMotorLeft);
             Serial.println("RL Motors stopped!");
-            closeFlap(servoFlap, 40, 120);
-            Serial.println("Servo flap closed!");
+            openFlap(servoFlap, 120, 40);
+            Serial.println("Servo flap opened!");
 
 
             Serial.println("Taking lift up");
-            liftGoingUp(myMotorLift, 255, 7000);
+            liftGoingUp(myMotorLift, 255, 10000);
 
             Serial.println("Taking lift down");
             liftGoingDown(myMotorLift, 255, 9000);
-            openFlap(servoFlap, 120, 40);
-            Serial.println("Servo flap has been opened!");
+
+            
+            //openFlap(servoFlap, 120, 40);
+            //Serial.println("Servo flap has been opened!");
             //moveForward(myMotorLeft, 50, myMotorRight, 50, 1000);
             
             
@@ -230,21 +245,31 @@ void loop() {
             }
             */
 
-            motor_speed = 40;
+            motor_speed = 100;
             iterations = 0;
+            flag = 0;
             Serial.println("Entering while loop");
-            while(iterations < 15){
+            while(iterations < 10){
               //moveForward(myMotorRight, motor_speed, myMotorLeft, motor_speed, 100);
-              moveForward(myMotorLeft, motor_speed, myMotorRight, motor_speed, 50);
+              moveForward(myMotorLeft, motor_speed, myMotorRight, motor_speed, 80);
               iterations+=1;
               Serial.print(iterations);
               if(isHallActive()==true){
                 Serial.println("MAGNETIC BLOCK DETECTED");
-                delay(1000);
+                //delay(1000);
+                stopRLMotors(1000, myMotorRight, myMotorLeft);
                 liftGoingUp(myMotorLift, 255, 10000);
+                
+                //motor_speed = 200;
+                //moveForward(myMotorLeft, motor_speed, myMotorRight, motor_speed, 1000);
                 stage = 0;
+                flag = 1;
                 break;
               }
+            }
+
+            if(flag == 1){
+              break;
             }
             
             stopRLMotors(2000, myMotorRight, myMotorLeft);
@@ -316,7 +341,32 @@ void loop() {
     case 5: 
           // at loading place
           stopRLMotors(5000, myMotorRight, myMotorLeft);
+          Serial.println("Inside case 14!");
+           servoArm.write(40);
+           
+           delay(2000);
+
+           servoArm.write(120);
+          
+           
+           delay(2000);
+
+           servoArm.write(40);
+           delay(2000);
+
+           stage = 6;
+
+            /*
+          stopRLMotors(5000, myMotorRight, myMotorLeft);
+          closeFlap(servoArm, 40, 120);
+          Serial.println("ARM OPENED");
+          delay(2000);
+          openFlap(servoArm, 120, 10);
+          Serial.println("ARM CLOSED"); 
+          delay(2000);
           stage = 6;
+          */
+          
           break;
           
     case 6: // parking - very ugly rough code but it works
@@ -338,6 +388,7 @@ void loop() {
     case 9:
             // After detecting a block and magnetic sensor doesn't become active
             motor_speed = 30;
+            Serial.println("inside case 9, and moving forward a teeny bit");
             moveForward(myMotorLeft, motor_speed, myMotorRight, motor_speed, 1000);
             stopRLMotors(2000, myMotorRight, myMotorLeft);
             pickUp();
@@ -358,7 +409,41 @@ void loop() {
             closeFlap(servoFlap, 40, 120);
             Serial.println("FLAP CLOSED");
             delay(3000);
+
+            /*
+            Serial.println("Inside case 14!");
+            closeFlap(servoArm, 40, 120);
+            Serial.println("ARM OPENED hasdjklfhasdjkfhljkasdasdl");
+            delay(2000);
+            openFlap(servoArm, 120, 10);
+            Serial.println("ARM CLOSED 111111111111111111111111111");
+            delay(2000);
+            */
             break;
+            
+           
+
+     case 14:
+            Serial.println("Inside case 14!");
+            servoArm.write(40);
+            servoFlap.write(40);
+            delay(2000);
+
+            servoArm.write(120);
+            servoFlap.write(120);
+           
+            delay(2000);
+            /*
+            closeFlap(servoArm, 40, 120);
+            Serial.println("ARM OPENED hasdjklfhasdjkfhljkasdasdl");
+            delay(2000);
+            openFlap(servoArm, 120, 10);
+            Serial.println("ARM CLOSED 111111111111111111111111111");
+            delay(2000);
+            */
+            
+            break;
+           
 
 
      case 20: // HALL SENSOR

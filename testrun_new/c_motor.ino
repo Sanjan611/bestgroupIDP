@@ -56,6 +56,7 @@ void turnLeft(Adafruit_DCMotor *motor1, long motor_speed_1, Adafruit_DCMotor *mo
   motor2->setSpeed(motor_speed_2);
 
   motor2->run(FORWARD);
+  motor1->run(FORWARD);
 
   delay(dur);
 
@@ -76,8 +77,11 @@ void stopRLMotors(long dur, Adafruit_DCMotor *motor1, Adafruit_DCMotor *motor2){
   motor1->setSpeed(0);
   motor2->setSpeed(0);
 
-  motor1->run(RELEASE);
-  motor2->run(RELEASE);
+  motor2->run(FORWARD);
+  motor1->run(FORWARD);
+
+  //motor1->run(RELEASE);
+  //motor2->run(RELEASE);
 
   delay(dur);
 }
@@ -117,14 +121,20 @@ void openFlap(Servo &servo, int start_degree, int end_degree){
   
 }
 
-void bringArmToNeutral(Servo servo,int initial){
+void bringArmToNeutral(Servo &servo,int initial){
 
   servo.write(initial);
+  return;
 }
 
-void sweepTheArm(Servo servo, int initial, int final, int sweep_step){
+void sweepTheArm(Servo &servo, int initial, int final, int sweep_step){
   // function that sweeps the unloading arm and then brings it back to neutral position
   // what works - initial = 0, final = 120, sweep_step = 5
+
+  servo.write(120);
+  return;
+
+  //0000
 
   servo.write(0);
 
