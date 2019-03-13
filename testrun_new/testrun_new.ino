@@ -96,7 +96,7 @@ void setup() {
   servoFlap.attach(10); // the pin!
   servoArm.attach(9); // the pin! 
 
-  stage = 0;
+  stage = 13;
   var = 0;
 
   bringArmToNeutral(servoArm, 0);
@@ -195,7 +195,7 @@ void loop() {
           //isThereABlock = false;                  // comment out for actual testing!
           if(isThereABlock==true){
             Serial.println("BLOCK DETECTED!");
-            delay(1000);
+            //delay(1000);
             
             stopRLMotors(5000, myMotorRight, myMotorLeft);
             Serial.println("RL Motors stopped!");
@@ -207,12 +207,12 @@ void loop() {
             liftGoingUp(myMotorLift, 255, 7000);
 
             Serial.println("Taking lift down");
-            liftGoingDown(myMotorLift, 255, 7000);
+            liftGoingDown(myMotorLift, 255, 9000);
             openFlap(servoFlap, 120, 40);
             Serial.println("Servo flap has been opened!");
             //moveForward(myMotorLeft, 50, myMotorRight, 50, 1000);
             
-            motor_speed = 50;
+            
             //time_b = time_a;
             //time_a = millis();
 
@@ -230,9 +230,10 @@ void loop() {
             }
             */
 
+            motor_speed = 40;
             iterations = 0;
             Serial.println("Entering while loop");
-            while(iterations < 10){
+            while(iterations < 15){
               //moveForward(myMotorRight, motor_speed, myMotorLeft, motor_speed, 100);
               moveForward(myMotorLeft, motor_speed, myMotorRight, motor_speed, 50);
               iterations+=1;
@@ -320,7 +321,7 @@ void loop() {
           
     case 6: // parking - very ugly rough code but it works
           motor_speed = 255;
-          moveBackwards(myMotorLeft, motor_speed, myMotorRight, motor_speed, 1000); 
+          moveBackwards(myMotorLeft, motor_speed, myMotorRight, motor_speed, 1000);
           motor_speed = 100;
           turnLeft(myMotorLeft, 0, myMotorRight, motor_speed, 4800);
           stage = 0;
@@ -408,7 +409,7 @@ void loop() {
               delay(1000);
               openFlap(servoFlap, 120, 40);
               delay(1000);
-              liftGoingDown(myMotorLift, 255, 7000);
+              liftGoingDown(myMotorLift, 255, 9000);
               delay(1000);
               closeFlap(servoFlap, 40, 120);
               delay(5000);
