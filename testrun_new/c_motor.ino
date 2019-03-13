@@ -48,8 +48,6 @@ void turnRight(Adafruit_DCMotor *motor1, long motor_speed_1, Adafruit_DCMotor *m
   motor1->run(RELEASE);
   motor2->run(RELEASE);
 
-
-  
 }
 
 void turnLeft(Adafruit_DCMotor *motor1, long motor_speed_1, Adafruit_DCMotor *motor2, long motor_speed_2, long dur){
