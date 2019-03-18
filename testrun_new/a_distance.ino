@@ -1,3 +1,5 @@
+int trigPin, echoPin;
+
 float get_distance(int whichSensor){
   /*
    * Function to get the distance as measured by the ultrasound sensors
