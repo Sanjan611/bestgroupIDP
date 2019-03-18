@@ -52,6 +52,10 @@ void turnRight(Adafruit_DCMotor *motor1, long motor_speed_1, Adafruit_DCMotor *m
 
 void turnLeft(Adafruit_DCMotor *motor1, long motor_speed_1, Adafruit_DCMotor *motor2, long motor_speed_2, long dur){
 
+  /*
+   * Function to turn left
+   */
+
   motor1->setSpeed(motor_speed_1);
   motor2->setSpeed(motor_speed_2);
 
@@ -65,6 +69,10 @@ void turnLeft(Adafruit_DCMotor *motor1, long motor_speed_1, Adafruit_DCMotor *mo
 }
 
 void stopLiftMotor(Adafruit_DCMotor *motor, long dur){
+
+  /*
+   * Function to stop the lift motor instantly
+   */
   motor->setSpeed(0);
 
   motor->run(RELEASE);
@@ -74,6 +82,9 @@ void stopLiftMotor(Adafruit_DCMotor *motor, long dur){
 
 
 void stopRLMotors(long dur, Adafruit_DCMotor *motor1, Adafruit_DCMotor *motor2){
+  /*
+   * Function to stop the wheel motors instantly
+   */
   motor1->setSpeed(0);
   motor2->setSpeed(0);
 
@@ -86,13 +97,10 @@ void stopRLMotors(long dur, Adafruit_DCMotor *motor1, Adafruit_DCMotor *motor2){
   delay(dur);
 }
 
-
-
-bool isStuck(){
-  
-}
-
 void closeFlap(Servo &servo, int start_degree, int end_degree){
+  /*
+   * Function to close the flap used to push the block onto the lift
+   */
   //servoFlap.write(0);
   //delay(2000);
   end_degree = 110;
@@ -107,6 +115,9 @@ void closeFlap(Servo &servo, int start_degree, int end_degree){
 
 
 void openFlap(Servo &servo, int start_degree, int end_degree){
+  /*
+   * Function to open tbe flap used to push the block onto the lift
+   */
   //servoFlap.write(180);
   //delay(2000);
 
@@ -122,6 +133,9 @@ void openFlap(Servo &servo, int start_degree, int end_degree){
 }
 
 void bringArmToNeutral(Servo &servo,int initial){
+  /*
+   * Function used to bring a servo to the default position
+   */
 
   servo.write(initial);
   return;
@@ -133,8 +147,6 @@ void sweepTheArm(Servo &servo, int initial, int final, int sweep_step){
 
   servo.write(120);
   return;
-
-  //0000
 
   servo.write(0);
 
@@ -160,7 +172,7 @@ void sweepTheArm(Servo &servo, int initial, int final, int sweep_step){
 
 void liftGoingUp(Adafruit_DCMotor *motor, long motor_speed, long dur){
   /*
-   * Function to bring the lift up
+   * Function to bring the lift up until it is at the top
    * The lift pulley motor is connected to M3 on the motor shield
    */
   // lift goes up until the microswitch on top is pressed

@@ -1,4 +1,14 @@
 bool moveToWall(int distance_limit, int distance_no_speed){
+  /*
+   * Function to move in a straight line until distance_limit from 
+   * the wall in front is reached, then slows down to a stop when
+   * distance_no_speed is reached.
+   * 
+   * Function includes speed adjustment based on the side sensor 
+   * reading which ensures the robot moves in a straight line parallel 
+   * to the walls.
+   * 
+   */
 
   //Serial.println("Start of one loop \n\n\n");
 
@@ -34,12 +44,3 @@ bool moveToWall(int distance_limit, int distance_no_speed){
     return true;
   }
 }
-
-/*
-  if(distance<10){
-    myMotor->setSpeed(150);
-    myMotor1->setSpeed(150);
-    myMotor->run(BACKWARD);
-    myMotor1->run(FORWARD);
-  }
-*/
